@@ -15,7 +15,7 @@ _: pkgs: {
         hayland =
           pkgs.haskell.lib.dontCheck
           (self.callCabal2nix "hayland" ./hsroots/haskell-wayland { });
-        hfuse = self.callCabal2nix "libinput" ./hfuse { };
+        HFuse = self.callCabal2nix "HFuse" ./hfuse { };
         hsroots =
           pkgs.haskell.lib.overrideCabal
           (self.callCabal2nix "hsroots" ./hsroots { input = pkgs.libinput; })
