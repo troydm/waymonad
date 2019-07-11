@@ -29,12 +29,12 @@ _: pkgs: {
           { inherit (pkgs) libinput; };
         waymonad =
           pkgs.haskell.lib.overrideCabal
-          (self.callCabal2nix "waymonad" ./. { inherit (pkgs) libinput; })
+          (self.callCabal2nix "waymonad" ./. { inherit (pkgs) libinput libxkbcommon; })
           (current: {
             librarySystemDepends =
               [
                 pkgs.wayland pkgs.pkgconfig pkgs.wlroots pkgs.pixman
-                pkgs.libxkbcommon pkgs.fuse pkgs.gegl
+                pkgs.fuse pkgs.gegl
               ];
           });
         waymonad-scanner =
