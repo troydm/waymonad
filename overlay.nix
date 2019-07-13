@@ -31,7 +31,7 @@ _: pkgs: {
           pkgs.haskell.lib.overrideCabal
           (self.callCabal2nix "waymonad" ./. { inherit (pkgs) libinput libxkbcommon; })
           (current: {
-            librarySystemDepends =
+            librarySystemDepends = current.librarySystemDepends ++
               [
                 pkgs.wayland pkgs.pkgconfig pkgs.wlroots pkgs.pixman
                 pkgs.fuse pkgs.gegl
