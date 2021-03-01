@@ -45,6 +45,7 @@ _: pkgs: {
         ) (current: {
           librarySystemDepends =
             current.librarySystemDepends ++ [ pkgs.linuxHeaders pkgs.glibc ];
+          doCheck = false;
         });
       });
   });
