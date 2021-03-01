@@ -3,9 +3,6 @@ _: pkgs: {
     overrides =
       pkgs.lib.composeExtensions (old.overrides or (_: _: {}))
       (self: super: {
-        network = super.network_3_0_1_1;
-        socks = super.socks_0_6_0;
-        connection = super.connection_0_3_0;
         cpphs = (self.callCabal2nix "cpphs" (pkgs.fetchzip rec {
           url = "mirror://hackage/cpphs-1.20.8/cpphs-1.20.8.tar.gz";
           sha256 = "1awx019c0pzcaibvbs2fdrlgvpaqfg05magb0sgxpwqyhjgkw6hb";
