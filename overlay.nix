@@ -1,7 +1,7 @@
 _: pkgs: {
   haskellPackages = pkgs.haskellPackages.override {
     overrides = self: super: {
-      hayland = self.callCabal2nix "hayland" ./hsroots/haskell-wayland {};
+      hayland = self.callPackage ./hsroots/haskell-wayland/hayland.nix {};
       HFuse = self.callCabal2nix "HFuse" ./hfuse {};
       hsroots =
         pkgs.haskell.lib.overrideCabal
