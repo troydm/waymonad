@@ -6,7 +6,10 @@
 mkDerivation {
   pname = "xkbcommon";
   version = "0.0.3";
-  src = ./hsroots/haskell-xkbcommon;
+  src = builtins.fetchTarball {
+    url = "https://github.com/Ongy/haskell-xkbcommon/archive/a1455b51c053289b1b5b27d19d4159180647228d.tar.gz";
+    sha256 = "03sw3isp64p1pqdwsagkvbppl8yqg7gwji5h7c80kci8dsx351zr";
+  };
   setupHaskellDepends = [
     base Cabal cpphs directory filepath process template-haskell text
   ];
@@ -19,4 +22,5 @@ mkDerivation {
   benchmarkHaskellDepends = [ base random time vector ];
   description = "Haskell bindings for libxkbcommon";
   license = lib.licenses.mit;
+  doCheck = false;
 }
