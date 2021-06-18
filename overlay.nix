@@ -31,7 +31,7 @@ _: pkgs: {
             librarySystemDepends = current.librarySystemDepends ++
               [
                 pkgs.wayland pkgs.pkgconfig pkgs.wlroots pkgs.pixman
-                pkgs.fuse pkgs.gegl
+                pkgs.fuse pkgs.gegl_0_4
               ];
           });
         waymonad-scanner =
