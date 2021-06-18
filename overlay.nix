@@ -3,12 +3,6 @@ _: pkgs: {
     overrides =
       pkgs.lib.composeExtensions (old.overrides or (_: _: {}))
       (self: super: {
-        cpphs = (self.callCabal2nix "cpphs" (pkgs.fetchzip rec {
-          url = "mirror://hackage/cpphs-1.20.8/cpphs-1.20.8.tar.gz";
-          sha256 = "1awx019c0pzcaibvbs2fdrlgvpaqfg05magb0sgxpwqyhjgkw6hb";
-        }) { }).overrideAttrs (_: {
-          patches = [ ./cpphs_lexcpp.patch ];
-        });
         hayland =
           pkgs.haskell.lib.dontCheck
           (self.callCabal2nix "hayland" ./hsroots/haskell-wayland { });
