@@ -21,7 +21,7 @@ _: pkgs: {
             librarySystemDepends =
               current.librarySystemDepends ++ [ pkgs.xorg.libX11 ];
           });
-        libinput =
+        hslibinput =
           self.callCabal2nix "libinput" ./hsroots/libinput
           { inherit (pkgs) libinput; };
         waymonad =
