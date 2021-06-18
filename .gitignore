@@ -1,0 +1,11 @@
+dist
+dist-newstyle
+cabal-dev
+*.o
+*.hi
+*.chi
+*.chs.h
+.cabal-sandbox
+cabal.sandbox.config
+TAGS
+tags
