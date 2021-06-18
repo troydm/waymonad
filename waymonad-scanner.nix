@@ -4,7 +4,7 @@
 mkDerivation {
   pname = "waymonad-scanner";
   version = "0.1.0.0";
-  src = ./.;
+  src = ./waymonad-scanner;
   libraryHaskellDepends = [
     base bytestring cereal containers hayland hsroots mtl process
     template-haskell text xml

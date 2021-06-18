@@ -6,7 +6,7 @@
 mkDerivation {
   pname = "xkbcommon";
   version = "0.0.3";
-  src = ./.;
+  src = ./hsroots/haskell-xkbcommon;
   setupHaskellDepends = [
     base Cabal cpphs directory filepath process template-haskell text
   ];
