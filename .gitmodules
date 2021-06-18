@@ -1,6 +1,6 @@
 [submodule "hsroots"]
 	path = hsroots
-	url = https://github.com/swaywm/hsroots
+	url = https://github.com/L-as/hsroots
 [submodule "hfuse"]
 	path = hfuse
 	url = https://github.com/ongy/hfuse.git
