@@ -1,6 +1,0 @@
-[submodule "hsroots"]
-	path = hsroots
-	url = https://github.com/L-as/hsroots
-[submodule "waymonad-scanner"]
-	path = waymonad-scanner
-	url = https://github.com/waymonad/waymonad-scanner
