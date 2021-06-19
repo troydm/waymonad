@@ -9,8 +9,8 @@ mkDerivation {
   libraryHaskellDepends = [
     base bytestring composition hayland hslibinput text unix xkbcommon
   ];
-  librarySystemDepends = [ hslibinput wayland libX11 ];
-  libraryPkgconfigDepends = [ pixman wlroots ];
+  librarySystemDepends = [ libX11 ];
+  libraryPkgconfigDepends = [ hslibinput wayland pixman wlroots ];
   description = "A small simple wrapper around wolroots";
   license = lib.licenses.lgpl21Only;
 }
