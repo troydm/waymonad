@@ -1,6 +1,6 @@
 { mkDerivation, base, bytestring, clock, composition, config-schema
 , config-value, containers, data-default, deepseq, directory
-, formatting, ghc-prim, hayland, HFuse, hsroots, lib, libinput
+, formatting, ghc-prim, hayland, HFuse, hsroots, lib, hslibinput
 , libxkbcommon, mtl, network, process, safe, semigroupoids, stm
 , template-haskell, text, time, transformers, unix, unliftio
 , unliftio-core, waymonad-scanner, xdg-basedir, xkbcommon
@@ -15,13 +15,13 @@ mkDerivation {
   libraryHaskellDepends = [
     base bytestring clock composition config-schema config-value
     containers data-default deepseq directory formatting ghc-prim
-    hayland HFuse hsroots libinput mtl network process safe
+    hayland HFuse hsroots hslibinput mtl network process safe
     semigroupoids stm template-haskell text time transformers unix
     unliftio unliftio-core waymonad-scanner xdg-basedir xkbcommon
   ];
-  librarySystemDepends = [ libxkbcommon wayland pkgconfig wlroots pixman fuse gegl_0_4 ];
+  #libraryPkgconfigDepends = [ hslibinput libxkbcommon wayland pkgconfig wlroots pixman fuse gegl_0_4 ];
   executableHaskellDepends = [
-    base containers hayland hsroots libinput text xkbcommon
+    base containers hayland hsroots hslibinput text xkbcommon
   ];
   homepage = "https://github.com/ongy/waymonad";
   description = "Wayland compositor build on the ideas of Xmonad";

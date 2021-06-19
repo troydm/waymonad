@@ -190,10 +190,9 @@ library
   
   -- Directories containing source files.
   hs-source-dirs:      src
-  PkgConfig-Depends:   libinput
-  extra-libraries: xkbcommon
+  --pkgconfig-depends:   libinput
   -- Extra tools (e.g. alex, hsc2hs, ...) needed to build the source.
-  build-tools:         hsc2hs
+  --build-tools:         hsc2hs
   
   -- Base language which the package is written in.
   default-language:    Haskell2010
