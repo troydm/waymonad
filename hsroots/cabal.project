@@ -1,2 +1,2 @@
-packages: ./ haskell-wayland/ haskell-xkbcommon
+packages: ./
 
