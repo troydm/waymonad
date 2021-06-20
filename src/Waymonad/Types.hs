@@ -227,7 +227,7 @@ data WayBindingState vs ws = WayBindingState
 -- | The Monad the compositor lives in. This allows access to all the required
 -- state.
 newtype Way vs ws b = Way (ReaderT (WayBindingState vs ws) IO b)
-    deriving (Functor, Applicative, Monad, MonadIO, MonadReader (WayBindingState vs ws))
+    deriving (Functor, Applicative, Monad, MonadIO, MonadReader (WayBindingState vs ws), MonadUnliftIO)
 
 type KeyBinding vs a = Way vs a ()
 type BindingMap vs a = IntMap (KeyBinding vs a)
@@ -287,10 +287,11 @@ type Managehook vs a = Query vs a (InsertAction vs a)
 runWay :: MonadIO m => WayBindingState vs a -> Way vs a b -> m b
 runWay state (Way m) = liftIO $ runReaderT m state
 
-instance MonadUnliftIO (Way vs a) where
-    askUnliftIO = do
-        state <- ask
-        pure $ UnliftIO $ \act -> runWay state act
+--instance MonadUnliftIO (Way vs a) where
+    --askUnliftIO = do
+    --    state <- ask
+    --    pure $ UnliftIO $ \act -> runWay state act
+    --withRunInIO = undefined
 
 -- | Datatype for ServerSideDecorations. This will be associated with views by
 -- the layouting when views are placed in the layout cache.
