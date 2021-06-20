@@ -16,4 +16,5 @@ mkDerivation {
   testHaskellDepends = [ base process xml c2hs ];
   description = "Haskell bindings for the C Wayland library";
   license = lib.licenses.mit;
+  doCheck = false; # it needs a wayland server available when testing
 }
