@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fobject-code #-}
+
 {-
 waymonad A wayland compositor in the spirit of xmonad
 Copyright (C) 2018  Markus Ongyerth
