@@ -123,7 +123,7 @@ library
   default-language:    Haskell2010
   ghc-options:         -Wall -Werror
 
-  pkgconfig-depends:   wayland-server, libinput, pixman-1, wlroots
+  pkgconfig-depends:   wayland-server, pixman-1, wlroots
 
   c-sources:           cbits/signal.c
   c-sources:           cbits/xdg_helpers.c

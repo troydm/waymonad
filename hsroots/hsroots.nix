@@ -10,7 +10,7 @@ mkDerivation {
     base bytestring composition hayland hslibinput text unix xkbcommon
   ];
   librarySystemDepends = [ libX11 ];
-  libraryPkgconfigDepends = [ hslibinput wayland pixman wlroots ];
+  libraryPkgconfigDepends = [ wayland pixman wlroots' ];
   description = "A small simple wrapper around wlroots";
   license = lib.licenses.lgpl21Only;
 }
