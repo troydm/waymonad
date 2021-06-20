@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fobject-code #-}
+
 module Graphics.Wayland.WlRoots.Seat
     ( WlrSeat
     , createSeat
