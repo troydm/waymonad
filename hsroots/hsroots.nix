@@ -11,6 +11,6 @@ mkDerivation {
   ];
   librarySystemDepends = [ libX11 ];
   libraryPkgconfigDepends = [ hslibinput wayland pixman wlroots ];
-  description = "A small simple wrapper around wolroots";
+  description = "A small simple wrapper around wlroots";
   license = lib.licenses.lgpl21Only;
 }

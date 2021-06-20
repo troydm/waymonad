@@ -13,7 +13,7 @@ name:                hsroots
 version:             0.1.0.0
 
 -- A short (one-line) description of the package.
-synopsis:            A small simple wrapper around wolroots
+synopsis:            A small simple wrapper around wlroots
 
 -- A longer description of the package.
 -- description:         
