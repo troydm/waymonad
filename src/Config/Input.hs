@@ -60,8 +60,8 @@ data InputConfig = InputConfig
     , inputCSeat    :: Maybe Text
     } deriving (Show)
 
-instance Spec LIOptions where
-    valuesSpec = sectionsSpec "input options" $
+instance HasSpec LIOptions where
+    anySpec = sectionsSpec "input options" $
         let makeDesc name = "The " `T.append` name `T.append` " option."
             makeOpt opt = optSection (LI.optionName opt) (makeDesc $ LI.optionName opt)
             opts = map (\o -> (makeOpt o, o)) LI.libinputOptions
@@ -69,8 +69,8 @@ instance Spec LIOptions where
                 fmap (opt, ) <$> sec
          in (LIOptions . catMaybes) <$> ret
 
-instance Spec InputConfig where
-    valuesSpec = sectionsSpec "input" $ do
+instance HasSpec InputConfig where
+    anySpec = sectionsSpec "input" $ do
         name  <- reqSection "name"  "Name of the device"
         seat <- optSection "seat" "Seat this device should be assigned to"
         options <- fromMaybe (LIOptions []) <$> optSection "options" "The options that should be set"

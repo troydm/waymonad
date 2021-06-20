@@ -31,7 +31,7 @@ where
 
 import "config-value" Config (ParseError)
 import Config.Schema
-import Config.Schema.Load (loadValueFromFile, SchemaError)
+import Config.Schema.Load (loadValueFromFile, ValueSpecMismatch)
 import Control.Exception (catches, Handler (..), throw)
 import Control.Monad.IO.Class (liftIO, MonadIO)
 import Data.Map (Map)
@@ -58,7 +58,7 @@ data WayConfig = WayConfig
     } deriving (Show)
 
 
-waySpec :: ValueSpecs WayConfig
+waySpec :: ValueSpec WayConfig
 waySpec = sectionsSpec "waymonad" $ do
     outputs <- optSection "outputs" "List of output configs to be applied when an output is loaded"
     inputs <- optSection "inputs" "List of input configurations"
@@ -71,8 +71,8 @@ waySpec = sectionsSpec "waymonad" $ do
         , configInputs  = fromMaybe [] inputs
         }
 
-instance Spec WayConfig where
-    valuesSpec = waySpec
+instance HasSpec WayConfig where
+    anySpec = waySpec
 
 printConfigInfo :: IO ()
 printConfigInfo = print (generateDocs waySpec)
@@ -93,10 +93,11 @@ loadConfig = liftIO $ do
                 hPutStrLn stderr "Loading default config"
                 pure $ Right emptyConfig
             else throw ex
-    let schemaHandler = Handler $ \(ex :: SchemaError) -> pure . Left $ show ex
+    -- FIXME: uncomment and use to catch error
+    --let schemaHandler = Handler $ \(ex :: ValueSpecMismatch _) -> pure . Left $ show ex
     let parseHandler   = Handler $ \(ex :: ParseError) -> pure . Left $ show ex
 
-    liftIO $ catches (Right <$> loadValueFromFile waySpec path) [ioHandler, schemaHandler, parseHandler]
+    liftIO $ catches (Right <$> loadValueFromFile waySpec path) [ioHandler, parseHandler]
 
 modifyConfig :: (FocusCore vs ws, WSTag ws) => WayConfig -> WayUserConf vs ws -> WayUserConf vs ws
 modifyConfig config =

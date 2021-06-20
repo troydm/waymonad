@@ -31,8 +31,8 @@ data Point a = Point
     , pointY :: a
     } deriving (Eq, Show)
 
-instance Spec a => Spec (Point a) where
-    valuesSpec = sectionsSpec "point" $ do
+instance HasSpec a => HasSpec (Point a) where
+    anySpec = sectionsSpec "point" $ do
         x <- reqSection "x" "The x position of the point"
         y <- reqSection "y" "The y position of the point"
 

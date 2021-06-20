@@ -36,7 +36,7 @@ import Data.Text (Text)
 import Waymonad.Types.Logger (LogPriority(..), WayLoggers (..), Logger (..))
 import Waymonad.Main
 
-prioritySpec :: ValueSpecs LogPriority
+prioritySpec :: ValueSpec LogPriority
 prioritySpec =
     Error <$ atomSpec "Error" <!>
     Warn  <$ atomSpec "Warn" <!>
@@ -44,13 +44,13 @@ prioritySpec =
     Debug <$ atomSpec "Debug" <!>
     Trace <$ atomSpec "Trace"
 
-instance Spec LogPriority where
-    valuesSpec = prioritySpec
+instance HasSpec LogPriority where
+    anySpec = prioritySpec
 
-loggerSection :: Text -> Text -> SectionSpecs Logger
+loggerSection :: Text -> Text -> SectionsSpec Logger
 loggerSection name desc = flip Logger name . fromMaybe Warn <$> optSection name desc
 
-loggerSpec :: ValueSpecs WayLoggers
+loggerSpec :: ValueSpec WayLoggers
 loggerSpec = sectionsSpec "loggers" (WayLoggers
     <$> loggerSection "Output"  "Output Logger"
     <*> loggerSection "WS"      "WS Logger"
@@ -63,8 +63,8 @@ loggerSpec = sectionsSpec "loggers" (WayLoggers
     <*> loggerSection "Render"  "Render Logger"
     )
 
-instance Spec WayLoggers where
-    valuesSpec = loggerSpec
+instance HasSpec WayLoggers where
+    anySpec = loggerSpec
 
 modifyLoggerConfig :: Maybe WayLoggers -> WayUserConf vs ws -> WayUserConf vs ws
 modifyLoggerConfig Nothing conf = conf

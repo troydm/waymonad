@@ -77,8 +77,8 @@ data Mode = Mode
     , modeCRefresh :: Word
     } deriving (Eq, Show)
 
-instance Spec OutputTransform where
-    valuesSpec = 
+instance HasSpec OutputTransform where
+    anySpec =
         outputTransformNormal      <$ atomSpec "Normal"     <!>
         outputTransform90          <$ atomSpec "N90"         <!>
         outputTransform180         <$ atomSpec "N180"        <!>
@@ -88,8 +88,8 @@ instance Spec OutputTransform where
         outputTransformFlipped_180 <$ atomSpec "Flipped180" <!>
         outputTransformFlipped_270 <$ atomSpec "Flipped270"
 
-instance Spec Mode where
-    valuesSpec = sectionsSpec "mode" $ do
+instance HasSpec Mode where
+    anySpec = sectionsSpec "mode" $ do
         width  <- reqSection "width"  "The width of the output in pixels"
         height <- reqSection "height" "The height of the output in pixels"
         refresh <- reqSection "refresh-rate" "The refresh rate"
@@ -97,8 +97,8 @@ instance Spec Mode where
         pure $ Mode width height refresh
 
 
-instance Spec OutputConfig where
-    valuesSpec = sectionsSpec "output" $ do
+instance HasSpec OutputConfig where
+    anySpec = sectionsSpec "output" $ do
         name <- reqSection "name" "Output name (actually connector)"
         pos <- optSection "position" "The logical position of the output"
         mode <- optSection "mode" "The output mode. This is pre transformation/scaling"
