@@ -12,8 +12,8 @@ in {
   haskellPackages = pkgs.haskellPackages.override {
     overrides = self: super: {
       hayland = self.callPackage ./hayland/hayland.nix {};
-      hsroots = self.callPackage ./hsroots/hsroots.nix {};
       hslibinput = self.callPackage (import "${libinput_src}/libinput.nix") {};
+      hsroots = self.callPackage ./hsroots/hsroots.nix {};
       waymonad-scanner = self.callPackage ./waymonad-scanner/waymonad-scanner.nix {};
       waymonad = self.callPackage ./waymonad.nix {};
       xkbcommon = self.callPackage (import "${xkbcommon_src}/xkbcommon.nix") {};
