@@ -1,75 +1,43 @@
-# About
+## About
 
-This is a fork of waymonad that hopes to get it working again.
+Waymonad is a Wayland compositor made with wlroots that aims to feel like [xmonad](https://github.com/xmonad/xmonad).
+
+This is a fork of Waymonad that hopes to get it working again.
 Hopefully we'll get it merged back into waymonad/waymonad eventually.
 
-# Contributing
+## Communication channels
 
-After you've installed [Nix](https://nixos.org/download.html) you can simply run `nix-shell`
-in the root of the project, after which you can run `cabal repl`.
-This is the **main** focus, since right now, things likely won't
-typecheck correctly, because dependencies have been updated, etc,
-so after running `cabal repl` you can try to fix the errors you see
-one by one!
+Join us in [#waymonad:matrix.org](https://matrix.to/#/#waymonad:matrix.org)!
 
-# Old README
+## Running it
 
-## waymonad
+You must first install [Nix](https://nixos.org/download.html),
+and after that you can run `nix-shell` in the root of the repository.
+This will give you an environment with GHC, Cabal, etc.
 
-We all love tiling window managers and most of all we love [xmonad](https://github.com/xmonad/xmonad).
-As you may know, [wayland](https://wayland.freedesktop.org/) is trying to replace X11.
+Now you can simply run `cabal run` which hopefully will launch Waymonad.
+You can launch a program inside Waymonad by simply setting WAYLAND_DISPLAY
+before launching a program, i.e. `env WAYLAND_DISPLAY=wayland-1 pavucontrol`.
+If you're not already running a Wayland compositor, it will likely be `wayland-0` instead.
 
-This brings problems for us, since xmonad will not work with the new architecture.
+## Contributing
 
-This project is intended to provide a wayland based desktop which shares the ideals and experience from xmonad.
+The current main goal is to update the wlroots we use to the latest one incrementally.
+To update the version used, set the revision in hsroots/hsroots.nix and fill
+the sha256 hash with zeroes.
+You can either fix what's broken by the update or remove the features broken,
+both are completely fine. The priority is most of all just using
+to the latest wlroots.
 
-### [WIP]: This is work in Progress.
-#### There's no bar/quality of life
+### Future
 
-If you need to lock your session: swaylock should work perfectly fine.
-Currently that's not set up in any automatic way though.
+Both hayland and hsroots also need a redesign such that there is a safe
+API that won't cause a segfault if you do something incorrect, but that
+will have to happen after updating wlroots to the latest version.
 
-Swaybg should work, and my waymonad-clients has a somewhat usable background application.
+## Troubleshooting
 
-#### "Minor" things
+Try running `nix-shell --pure` instead if you're having problems inside the shell.
+Make sure to set `XDG_RUNTIME_DIR` and `WAYLAND_DISPLAY` if you do this.
 
-* There is barely any documentation so unless you are familiar with Haskell (and preferably xmonad) this may be rather hard to get comfortable with.
-
------
-## "Install" (compile and execute locally):
-
-To test this, you need `wlroots` installed.
-This currently only builds with the `new-build` feature of cabal-install. `stack` is (not yet) supported.
-
- * git clone --recursive https://github.com/ongy/waymonad
- * cd waymonad
- * `[PKG_CONFIG_PATH=/usr/local/lib/pkgconfig] cabal new-build`
- 
- #### For unprivileged install:
- * Configure wlroots with: `meson build --prefix=<your prefix>`
- * ninja -C build install
- * `PKG_CONFIG_PATH=<your prefix>/lib/pkgconfig cabal new-build`
- 
- ---
-#### For the little documentation there is for now: 
- * cabal new-haddock
-
------
-
-#### What this is NOT
-
-* A straight upgrade path
-* A reimplementation of xmonad
-* A full implementation containing DRM and other backends
-
-#### What this is
-
-* Implemented in Haskell
-* predictable layouting
-* based on the compositor library [wlroots](https://github.com/SirCmpwn/wlroots)
-
-
-## The fabulous logo:
-
-<img src="./assets/logo-heavy.svg">
 <img src="./assets/logo-light.svg">
