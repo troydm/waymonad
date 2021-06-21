@@ -3,12 +3,13 @@
 , libX11, fetchFromGitHub
 }:
 let
-  wlroots' = wlroots.overrideAttrs (o: {
+  wlroots' = wlroots.overrideAttrs (o: rec {
+    version = "0.4";
     src = fetchFromGitHub {
       owner = "swaywm";
       repo = "wlroots";
-      rev = "04c9ca4198a729a95a6368bbbf0438d1ba3465fa";
-      sha256 = "+pPULTGDkQg1/mqy98soQ2UjUTblw/FnZTSoFW+n5cc=";
+      rev = version;
+      sha256 = "MXce7dPibI7+T2gmOqd66gkcXAne+2D7KsZq63zjjb8=";
     };
     mesonFlags = o.mesonFlags ++ ["-Dwerror=false"];
   });
