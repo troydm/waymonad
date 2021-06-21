@@ -201,9 +201,9 @@ library
     c-sources:           cbits/background.c
   --Werror
 -- -threaded
-  -- build-depends: dump-core
-  -- ghc-options: -fplugin=DumpCore -fplugin-opt DumpCore:core-html
-  -- ghc-options: -O2
+  --build-depends: dump-core
+  --ghc-options: -fplugin=DumpCore -fplugin-opt DumpCore:core-html
+  --ghc-options: -O2
 executable waymonad
   -- .hs or .lhs file containing the Main module.
   main-is:             Main.hs

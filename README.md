@@ -23,8 +23,8 @@ If you're not already running a Wayland compositor, it will likely be `wayland-0
 ## Contributing
 
 The current main goal is to update the wlroots we use to the latest one incrementally.
-To update the version used, set the revision in hsroots/hsroots.nix and fill
-the sha256 hash with zeroes.
+To update the version used, set the revision in hsroots/hsroots.nix and replace
+the sha256 hash with `AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`.
 You can either fix what's broken by the update or remove the features broken,
 both are completely fine. The priority is most of all just using
 to the latest wlroots.
