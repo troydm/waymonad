@@ -21,3 +21,4 @@ cabal.project.local
 *.swp
 .ghc.environment*
 .direnv/
+/core

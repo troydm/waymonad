@@ -196,7 +196,7 @@ library
   
   -- Base language which the package is written in.
   default-language:    Haskell2010
-  ghc-options:         -Wall -Wno-name-shadowing -Wno-unused-matches -Wno-unused-imports -Wno-unused-local-binds
+  ghc-options:         -O1 -g -Wall -Wno-name-shadowing -Wno-unused-matches -Wno-unused-imports -Wno-unused-local-binds
   if impl(ghc < 8.1)
     c-sources:           cbits/background.c
   --Werror
@@ -208,6 +208,7 @@ executable waymonad
   -- .hs or .lhs file containing the Main module.
   main-is:             Main.hs
   default-language:    Haskell2010
-  ghc-options:         -Wall -with-rtsopts=-V0 -O0 -rtsopts
+  --ghc-options:         -g -Wall -with-rtsopts=-V0 -O1 -rtsopts -dumpdir core -ddump-to-file -ddump-simpl -dppr-case-as-let -dsuppress-all
+  ghc-options:         -g -Wall -with-rtsopts=-V0 -O1 -rtsopts
   hs-source-dirs:      bin
   build-depends:       base >=4.6.0.1 && <5, waymonad, hayland, text, libinput, xkbcommon, hsroots, containers
