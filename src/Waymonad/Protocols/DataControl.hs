@@ -24,10 +24,10 @@ where
 import Control.Monad.IO.Class (liftIO)
 
 import Graphics.Wayland.Server (DisplayServer(..))
-import Graphics.Wayland.WlRoots.DataControl (dataControlManagerCreate, dataControlManagerDestroy)
+import Graphics.Wayland.WlRoots.DataControl (dataControlManagerCreate)
 
 import Waymonad.Start (Bracketed (..))
 
 getDataControlBracket :: Bracketed vs DisplayServer a
-getDataControlBracket = Bracketed (liftIO . dataControlManagerCreate) (liftIO . dataControlManagerDestroy)
+getDataControlBracket = Bracketed (liftIO . dataControlManagerCreate) (const $ pure ())
 

@@ -7,7 +7,6 @@ module Graphics.Wayland.WlRoots.SurfaceLayers
     , LayerShellLayer (..)
     , getLayerShellEvents
     , layerShellCreate
-    , layerShellDestroy
 
     , configureSurface
     , closeSurface
@@ -147,11 +146,6 @@ layerShellCreate :: DisplayServer -> IO LayerShell
 layerShellCreate (DisplayServer dsp) = LayerShell <$>
     throwErrnoIfNull "layerShellCreate" (c_create dsp)
 
-foreign import ccall "wlr_layer_shell_v1_destroy" c_destroy :: Ptr LayerShell -> IO ()
-
-layerShellDestroy :: LayerShell -> IO ()
-layerShellDestroy = c_destroy . unLS
-
 foreign import ccall unsafe "wlr_layer_surface_v1_configure" c_configure :: Ptr LayerSurface -> Word32 -> Word32 -> IO ()
 
 configureSurface :: LayerSurface -> Word32 -> Word32 -> IO ()
@@ -180,7 +174,7 @@ getLayerSurfaceEvents (LayerSurface ptr) = LayerSurfaceEvents
 
 getLayerSurfaceLayer :: LayerSurface -> IO LayerShellLayer
 getLayerSurfaceLayer (LayerSurface ptr) = do
-    layer :: CInt <- #{peek struct wlr_layer_surface_v1, layer} ptr
+    layer :: CInt <- #{peek struct wlr_layer_surface_v1, current.layer} ptr
     pure $ case layer of
         #{const ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND} -> LayerShellLayerBackground
         #{const ZWLR_LAYER_SHELL_V1_LAYER_BOTTOM}     -> LayerShellLayerBottom

@@ -7,7 +7,6 @@ module Graphics.Wayland.WlRoots.ServerDecoration
     , ServerDecorationEvents (..)
 
     , setDefaultDecorationMode
-    , destroyServerDecorationManager
     , createServerDecorationManager
     , getDecorationManagerEvents
     , getServerDecorationMode
@@ -60,12 +59,6 @@ createServerDecorationManager :: DisplayServer -> IO (Ptr WlrServerDecorationMan
 createServerDecorationManager (DisplayServer ptr) =
     throwErrnoIfNull "createServerDecorationManager" $ c_create ptr
 
-
-foreign import ccall unsafe "wlr_server_decoration_manager_destroy" c_destroy :: Ptr WlrServerDecorationManager -> IO ()
-
-
-destroyServerDecorationManager :: Ptr WlrServerDecorationManager -> IO ()
-destroyServerDecorationManager = c_destroy
 
 -- void wlr_server_decoration_manager_set_default_mode(
 --  struct wlr_server_decoration_manager *manager, uint32_t default_mode);

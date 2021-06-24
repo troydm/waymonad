@@ -1,7 +1,6 @@
 module Graphics.Wayland.WlRoots.InputInhibitor
     ( WlrInputInhibitor (..)
     , createInputInhibitor
-    , destroyInputInhibitor
 
     , getInhibitClient
     , WlrInputInhibitEvents (..)
@@ -28,12 +27,6 @@ foreign import ccall unsafe "wlr_input_inhibit_manager_create" c_create :: Ptr D
 createInputInhibitor :: DisplayServer -> IO WlrInputInhibitor
 createInputInhibitor (DisplayServer dsp) = WlrInputInhibitor <$>
     throwErrnoIfNull "createInputInhibitor" (c_create dsp)
-
-foreign import ccall unsafe "wlr_input_inhibit_manager_destroy" c_destroy :: Ptr WlrInputInhibitor -> IO ()
-
-
-destroyInputInhibitor :: WlrInputInhibitor -> IO ()
-destroyInputInhibitor (WlrInputInhibitor ptr) = c_destroy ptr
 
 getInhibitClient :: WlrInputInhibitor -> IO (Maybe Client)
 getInhibitClient (WlrInputInhibitor ptr) = do

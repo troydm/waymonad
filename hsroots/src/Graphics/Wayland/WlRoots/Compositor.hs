@@ -2,7 +2,6 @@
 module Graphics.Wayland.WlRoots.Compositor
     ( WlrCompositor
     , compositorCreate
-    , compositorDestroy
     )
 where
 
@@ -18,8 +17,3 @@ foreign import ccall "wlr_compositor_create" c_compositor_create :: Ptr DisplayS
 compositorCreate :: DisplayServer -> Ptr Renderer -> IO (Ptr WlrCompositor)
 compositorCreate (DisplayServer ptr) backend = 
     throwErrnoIfNull "compositorCreate" $ c_compositor_create ptr backend
-
-foreign import ccall "wlr_compositor_destroy" c_compositor_destroy :: Ptr WlrCompositor -> IO ()
-
-compositorDestroy :: Ptr WlrCompositor -> IO ()
-compositorDestroy = c_compositor_destroy

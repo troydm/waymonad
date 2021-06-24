@@ -1,7 +1,6 @@
 module Graphics.Wayland.WlRoots.LinuxDMABuf
     ( LinuxDMABuf (..)
     , createDMABuf
-    , destroyDMABuf
     )
 where
 
@@ -20,8 +19,3 @@ foreign import ccall unsafe "wlr_linux_dmabuf_v1_create" c_create :: Ptr Display
 createDMABuf :: DisplayServer -> Ptr Backend -> IO LinuxDMABuf
 createDMABuf (DisplayServer dsp) backend =
     LinuxDMABuf <$> throwErrnoIfNull "creatELinuxDMABuf" (c_create dsp =<< backendGetRenderer backend)
-
-foreign import ccall "wlr_linux_dmabuf_v1_destroy" c_destroy :: Ptr LinuxDMABuf -> IO ()
-
-destroyDMABuf :: LinuxDMABuf -> IO ()
-destroyDMABuf (LinuxDMABuf ptr) = c_destroy ptr

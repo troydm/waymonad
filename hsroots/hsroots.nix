@@ -1,15 +1,15 @@
 { mkDerivation, base, bytestring, composition, hayland, lib
 , hslibinput, pixman, text, unix, wayland, wlroots, xkbcommon
-, libX11, fetchFromGitHub, freerdp
+, libX11, fetchFromGitHub, freerdp, mesa
 }:
 let
   wlroots' = wlroots.overrideAttrs (o: rec {
-    version = "0.7.0";
+    version = "0.9.1";
     src = fetchFromGitHub {
       owner = "swaywm";
       repo = "wlroots";
       rev = version;
-      sha256 = "iiBRcY/NpQUJZDvQUHS0feuwa8du5RNpb+2wpa9R/Us=";
+      sha256 = "H9Wx1cs+OJhwfCoNpLOW/Hjus2U5W4vfH0eVXHmpAFI=";
     };
     mesonFlags = o.mesonFlags ++ ["-Dwerror=false"];
     nativeBuildInputs = o.nativeBuildInputs ++ [freerdp];
@@ -21,7 +21,7 @@ in mkDerivation {
   libraryHaskellDepends = [
     base bytestring composition hayland hslibinput text unix xkbcommon
   ];
-  librarySystemDepends = [ libX11 ];
+  librarySystemDepends = [ libX11 mesa ];
   libraryPkgconfigDepends = [ wayland pixman wlroots' ];
   description = "A small simple wrapper around wlroots";
   license = lib.licenses.lgpl21Only;

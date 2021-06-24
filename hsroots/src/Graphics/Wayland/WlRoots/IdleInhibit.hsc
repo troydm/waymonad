@@ -2,7 +2,6 @@ module Graphics.Wayland.WlRoots.IdleInhibit
     ( IdleInhibitManager (..)
 
     , idleInhibitCreate
-    , idleInhibitDestroy
     , getIdleInhibitGlobal
     , getIdleInhibitSignal
 
@@ -32,11 +31,6 @@ foreign import ccall "wlr_idle_inhibit_v1_create" c_create :: Ptr DisplayServer 
 idleInhibitCreate :: DisplayServer -> IO IdleInhibitManager
 idleInhibitCreate (DisplayServer dsp) = IdleInhibitManager <$> 
     throwErrnoIfNull "idleInhibitCreate" (c_create dsp)
-
-foreign import ccall "wlr_idle_inhibit_v1_destroy" c_destroy :: Ptr IdleInhibitManager -> IO ()
-
-idleInhibitDestroy :: IdleInhibitManager -> IO ()
-idleInhibitDestroy (IdleInhibitManager ptr) = c_destroy ptr
 
 getIdleInhibitGlobal :: IdleInhibitManager -> IO (Ptr WlGlobal)
 getIdleInhibitGlobal =

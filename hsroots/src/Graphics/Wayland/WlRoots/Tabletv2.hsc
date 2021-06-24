@@ -40,7 +40,6 @@ import Graphics.Wayland.WlRoots.Surface (WlrSurface)
 newtype TabletManagerv2 = TabletManagerv2 (Ptr TabletManagerv2)
 
 foreign import ccall unsafe "wlr_tablet_v2_create" c_create_manager :: Ptr DisplayServer -> IO (Ptr TabletManagerv2)
-foreign import ccall safe "wlr_tablet_v2_destroy" c_destroy_manager :: Ptr TabletManagerv2 -> IO ()
 
 createTabletManagerv2 :: DisplayServer -> IO TabletManagerv2
 createTabletManagerv2 (DisplayServer dsp) =
@@ -48,7 +47,7 @@ createTabletManagerv2 (DisplayServer dsp) =
 
 instance GlobalWrapper TabletManagerv2 where
     getGlobal (TabletManagerv2 ptr) = #{peek struct wlr_tablet_manager_v2, wl_global} ptr
-    removeGlobal (TabletManagerv2 ptr) = c_destroy_manager ptr
+    removeGlobal (TabletManagerv2 _) = undefined
 
 
 newtype Tabletv2 = Tabletv2 (Ptr Tabletv2) deriving (Eq, Ord, Show)

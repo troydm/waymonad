@@ -75,10 +75,7 @@ makeManager display = do
 
 
 getIdleInihibitBracket :: Bracketed vs DisplayServer ws
-getIdleInihibitBracket = Bracketed makeManager (\(manager, token) -> liftIO $ do
-    removeListener token
-    idleInhibitDestroy manager
-                                               )
+getIdleInihibitBracket = Bracketed makeManager (const $ pure ())
 
 addIdleView :: IdleInhibitor -> Way vs ws ()
 addIdleView inhibitor = do

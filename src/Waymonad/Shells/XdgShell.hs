@@ -88,13 +88,7 @@ instance (FocusCore vs ws, WSTag ws) =>  ShellClass XdgRef vs ws where
                 dsp <- compDisplay . wayCompositor <$> getState
                 shell <- xdgShellCreate dsp
                 liftIO $ writeIORef ref $ Just shell
-    deactivateShell (XdgRef ref) = do
-        ret <- liftIO $ readIORef ref
-        case ret of
-            Just XdgShell {xdgWlrootsShell = roots} -> liftIO $ do
-                R.xdgShellDestroy roots
-                writeIORef ref Nothing
-            Nothing -> pure ()
+    deactivateShell = undefined
     isShellActive (XdgRef ref) = do
         ret <- liftIO $ readIORef ref
         pure $ case ret of

@@ -94,11 +94,5 @@ makeManager display = do
     deactive <- setSignalHandler (inputInhibitEventsDeactivate signals) deactivate
     pure (ret, active, deactive)
 
-destroyManager :: (WlrInputInhibitor, ListenerToken, ListenerToken) -> Way vs ws ()
-destroyManager (manager, t1, t2) = liftIO $ do
-    removeListener t1
-    removeListener t2
-    destroyInputInhibitor manager
-
 getInputInhibitBracket :: Bracketed vs DisplayServer ws
-getInputInhibitBracket = Bracketed makeManager destroyManager
+getInputInhibitBracket = Bracketed makeManager (const $ pure ())

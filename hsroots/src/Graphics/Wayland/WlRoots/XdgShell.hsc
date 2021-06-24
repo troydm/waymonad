@@ -2,7 +2,6 @@
 module Graphics.Wayland.WlRoots.XdgShell
     ( WlrXdgShell
     , xdgShellCreate
-    , xdgShellDestroy
 
     , WlrXdgSurface
     , xdgSurfaceGetSurface
@@ -86,11 +85,6 @@ xdgShellCreate new (DisplayServer ptr) = do
     poke (#{ptr struct wlr_xdg_shell, data} shell) (castStablePtrToPtr sptr)
 
     pure shell
-
-foreign import ccall unsafe "wlr_xdg_shell_destroy" c_shell_destroy :: Ptr WlrXdgShell -> IO ()
-
-xdgShellDestroy :: Ptr WlrXdgShell -> IO ()
-xdgShellDestroy = c_shell_destroy
 
 data WlrXdgSurface
 data WlrXdgToplevel
