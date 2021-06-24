@@ -121,7 +121,7 @@ library
   
   -- Base language which the package is written in.
   default-language:    Haskell2010
-  ghc-options:         -Wall -Werror
+  ghc-options:         -Wall
 
   pkgconfig-depends:   wayland-server, pixman-1, wlroots
 
