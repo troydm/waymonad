@@ -7,8 +7,8 @@ module Graphics.Wayland.WlRoots.Output
     , outputEnable
     , outputDisable
     , isOutputEnabled
-    , makeOutputCurrent
-    , swapOutputBuffers
+    , attachRender
+    , commitOutput
     , getOutputPosition
 
     , effectiveResolution
@@ -41,8 +41,8 @@ module Graphics.Wayland.WlRoots.Output
     , getModel
     , getSerial
 
-    , getOutputNeedsSwap
-    , setOutputNeedsSwap
+    , getOutputNeedsFrame
+    , setOutputNeedsFrame
 
     , destroyOutputGlobal
     , createOutputGlobal
@@ -67,10 +67,10 @@ import Data.ByteString.Unsafe (unsafePackCString)
 import Data.Int (Int32)
 --import Data.Maybe (fromMaybe)
 import Data.Text (Text)
-import Data.Word (Word32, Word8, Word64)
+import Data.Word (Word32, Word8)
 import Foreign.C.Error (throwErrnoIf_)
-import Foreign.C.Types (CInt(..), CLong (..))
-import Foreign.Marshal.Alloc (alloca, allocaBytes)
+import Foreign.C.Types (CInt(..))
+import Foreign.Marshal.Alloc (alloca)
 import Foreign.Ptr (Ptr, plusPtr, nullPtr)
 import Foreign.Storable (Storable(..))
 
@@ -104,11 +104,9 @@ getModel = fmap (makeMaybe . E.decodeUtf8) . unsafePackCString . #{ptr struct wl
 getSerial :: Ptr WlrOutput -> IO (Maybe Text)
 getSerial = fmap (makeMaybe . E.decodeUtf8) . unsafePackCString . #{ptr struct wlr_output, serial}
 
+-- FIXME: very ugly hack
 getOutputPosition :: Ptr WlrOutput -> IO Point
-getOutputPosition ptr = do
-    x :: Int32 <- #{peek struct wlr_output, lx} ptr
-    y :: Int32 <- #{peek struct wlr_output, ly} ptr
-    pure $ Point (fromIntegral x) (fromIntegral y)
+getOutputPosition _ = pure $ Point 0 0
 
 foreign import ccall unsafe "wlr_output_enable" c_output_enable :: Ptr WlrOutput -> Bool -> IO ()
 
@@ -121,28 +119,19 @@ outputDisable = flip c_output_enable False
 isOutputEnabled :: Ptr WlrOutput -> IO Bool
 isOutputEnabled = fmap (/= (0 :: Word8)) . #{peek struct wlr_output, enabled}
 
-foreign import ccall unsafe "wlr_output_make_current" c_make_current :: Ptr WlrOutput -> Ptr CInt -> IO Word8
-makeOutputCurrent :: Ptr WlrOutput -> IO (Maybe Int)
-makeOutputCurrent out = alloca $ \ptr -> do
-    ret <- c_make_current out ptr
-    if ret == 0
+foreign import ccall unsafe "wlr_output_attach_render" c_attach_render :: Ptr WlrOutput -> Ptr CInt -> IO Bool
+attachRender :: Ptr WlrOutput -> IO (Maybe Int)
+attachRender out = alloca $ \ptr -> do
+    ret <- c_attach_render out ptr
+    if ret == False
         then pure Nothing
         else Just . fromIntegral <$> peek ptr
 
 
-foreign import ccall unsafe "wlr_output_swap_buffers" c_swap_buffers :: Ptr WlrOutput -> Ptr () -> Ptr PixmanRegion32 -> IO Word8
-swapOutputBuffers :: Ptr WlrOutput -> Maybe Integer -> Maybe (Ptr PixmanRegion32) -> IO Bool
-swapOutputBuffers out time _ {-damage-} =
-    let withTime = case time of
-            Nothing -> ($ nullPtr)
-            Just t -> \act -> allocaBytes #{size struct timespec} $ \ptr -> do
-                    let secs :: Word64 = fromIntegral (t `div` 1e9)
-                    let nsecs :: CLong = fromIntegral (t `mod` 1e9)
-                    #{poke struct timespec, tv_sec} ptr secs
-                    #{poke struct timespec, tv_nsec} ptr nsecs
-                    act ptr
-     in (/= 0) <$> withTime (\t -> c_swap_buffers out t {-(fromMaybe nullPtr damage)-} nullPtr)
-
+--foreign import ccall unsafe "wlr_output_set_damage" c_set_damage :: Ptr WlrOutput -> Ptr PixmanRegion32 -> IO Bool
+foreign import ccall unsafe "wlr_output_commit" c_commit :: Ptr WlrOutput -> IO Bool
+commitOutput :: Ptr WlrOutput -> IO Bool
+commitOutput = c_commit
 
 foreign import ccall unsafe "wlr_output_destroy" c_output_destroy :: Ptr WlrOutput -> IO ()
 
@@ -161,9 +150,8 @@ effectiveResolution output = alloca $ \width -> alloca $ \height -> do
 
 getEffectiveBox :: Ptr WlrOutput -> IO WlrBox
 getEffectiveBox ptr = do
-    phys <- getOutputBox ptr
     (width, height) <- effectiveResolution ptr
-    pure phys {boxWidth = width, boxHeight = height}
+    pure WlrBox {boxX = 0, boxY = 0, boxWidth = width, boxHeight = height} -- FIXME: bad workaround!
 
 foreign import ccall "wlr_output_set_transform" c_output_transform :: Ptr WlrOutput -> CInt -> IO ()
 
@@ -232,7 +220,7 @@ data OutputSignals = OutputSignals
     , outSignalScale :: Ptr (WlSignal WlrOutput)
     , outSignalTransform :: Ptr (WlSignal WlrOutput)
     , outSignalDestroy :: Ptr (WlSignal WlrOutput)
-    , outSignalNeedsSwap :: Ptr (WlSignal WlrOutput)
+    , outSignalNeedsFrame :: Ptr (WlSignal WlrOutput)
     }
 
 getOutputSignals :: Ptr WlrOutput -> OutputSignals
@@ -242,20 +230,17 @@ getOutputSignals ptr = OutputSignals
     , outSignalScale = #{ptr struct wlr_output, events.scale} ptr
     , outSignalTransform = #{ptr struct wlr_output, events.transform} ptr
     , outSignalDestroy = #{ptr struct wlr_output, events.destroy} ptr
-    , outSignalNeedsSwap = #{ptr struct wlr_output, events.needs_swap} ptr
+    , outSignalNeedsFrame = #{ptr struct wlr_output, events.needs_frame} ptr
     }
 
 getDataPtr :: Ptr WlrOutput -> Ptr (Ptr a)
 getDataPtr = #{ptr struct wlr_output, data}
 
-
 getOutputBox :: Ptr WlrOutput -> IO WlrBox
 getOutputBox ptr = do
-    x :: Word32 <- #{peek struct wlr_output, lx} ptr
-    y :: Word32 <- #{peek struct wlr_output, ly} ptr
     width :: Word32 <- #{peek struct wlr_output, width} ptr
     height :: Word32 <- #{peek struct wlr_output, height} ptr
-    pure $ WlrBox (fromIntegral x) (fromIntegral y) (fromIntegral width) (fromIntegral height)
+    pure $ WlrBox 0 0 (fromIntegral width) (fromIntegral height)
 
 getOutputScale :: Ptr WlrOutput -> IO Float
 getOutputScale = #{peek struct wlr_output, scale}
@@ -265,12 +250,12 @@ foreign import ccall "wlr_output_set_scale" c_set_scale :: Ptr WlrOutput -> Floa
 setOutputScale :: Ptr WlrOutput -> Float -> IO ()
 setOutputScale = c_set_scale
 
-getOutputNeedsSwap :: Ptr WlrOutput -> IO Bool
-getOutputNeedsSwap = fmap (/= (0 :: Word8)) . #{peek struct wlr_output, needs_swap}
+getOutputNeedsFrame :: Ptr WlrOutput -> IO Bool
+getOutputNeedsFrame = fmap (/= (0 :: Word8)) . #{peek struct wlr_output, needs_frame}
 
-setOutputNeedsSwap :: Ptr WlrOutput -> Bool -> IO ()
-setOutputNeedsSwap ptr val =
-    #{poke struct wlr_output, needs_swap} ptr (if val then 1 else 0 :: Word8)
+setOutputNeedsFrame :: Ptr WlrOutput -> Bool -> IO ()
+setOutputNeedsFrame ptr val =
+    #{poke struct wlr_output, needs_frame} ptr (if val then 1 else 0 :: Word8)
 
 foreign import ccall "wlr_output_create_global" c_create_global :: Ptr WlrOutput -> IO ()
 

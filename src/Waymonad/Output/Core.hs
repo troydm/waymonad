@@ -27,7 +27,7 @@ import Graphics.Pixman
 import Graphics.Wayland.WlRoots.Util.Region
 import Graphics.Wayland.WlRoots.Box (WlrBox (..))
 import Graphics.Wayland.WlRoots.Output
-    ( setOutputNeedsSwap
+    ( setOutputNeedsFrame
     , scheduleOutputFrame
     , getEffectiveBox
     , getOutputScale
@@ -37,7 +37,7 @@ import Waymonad.Utility.Base (ptrToInt)
 import Waymonad.Types (Output (..))
 
 setOutputDirty :: MonadIO m => Output -> m ()
-setOutputDirty out = liftIO $ setOutputNeedsSwap (outputRoots out) True
+setOutputDirty out = liftIO $ setOutputNeedsFrame (outputRoots out) True
 
 getOutputId :: Output -> Int
 getOutputId = ptrToInt . outputRoots
@@ -49,7 +49,7 @@ outApplyDamage o@Output {outputRoots = roots} Nothing = liftIO $ do
         resetRegion reg . Just $ WlrBox 0 0 w h
         outApplyDamage o (Just reg)
 outApplyDamage Output {outputRoots = roots, outputDamage = damage} (Just reg) = liftIO $ do
-    setOutputNeedsSwap roots True
+    setOutputNeedsFrame roots True
 
     outputScale <- getOutputScale roots
     scaleRegion reg outputScale

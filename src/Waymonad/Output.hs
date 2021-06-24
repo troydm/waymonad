@@ -205,7 +205,7 @@ handleOutputAdd' handler hook output = do
     modeH <- setSignalHandler (outSignalMode signals) (const $ outputEffectiveChanged out)
     scaleH <- setSignalHandler (outSignalScale signals) (const $ outputEffectiveChanged out)
     transformH <- setSignalHandler (outSignalTransform signals) (const $ outputEffectiveChanged out)
-    needsSwapH <- setSignalHandler (outSignalNeedsSwap signals) (const . liftIO $ scheduleOutputFrame (outputRoots out))
+    needsSwapH <- setSignalHandler (outSignalNeedsFrame signals) (const . liftIO $ scheduleOutputFrame (outputRoots out))
 
     hook out
 

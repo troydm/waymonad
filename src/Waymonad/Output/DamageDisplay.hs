@@ -36,8 +36,8 @@ import Graphics.Wayland.WlRoots.Render.Matrix (withMatrix, matrixProjectBox)
 import Graphics.Wayland.WlRoots.Render.Color (Color (..))
 import Graphics.Wayland.WlRoots.Box (WlrBox (..), Point (..))
 import Graphics.Wayland.WlRoots.Output
-    ( getOutputDamage , isOutputEnabled, getOutputNeedsSwap , outputTransformedResolution
-    , setOutputNeedsSwap, getOutputTransform, getTransMatrix, outputGetBackend
+    ( getOutputDamage , isOutputEnabled, getOutputNeedsFrame , outputTransformedResolution
+    , setOutputNeedsFrame, getOutputTransform, getTransMatrix, outputGetBackend
     )
 import Graphics.Pixman
 
@@ -98,7 +98,7 @@ getTrackerRegions DamageTracker {damageRegions = regions, damageIndex = indexRef
 damageDisplay :: WSTag ws => Int -> Double -> Output -> Way vs ws ()
 damageDisplay depth secs out@Output {outputRoots = output, outputLayout = layers} = do
     enabled <- liftIO $ isOutputEnabled output
-    needsSwap <- liftIO $ getOutputNeedsSwap output
+    needsSwap <- liftIO $ getOutputNeedsFrame output
     liftIO $ when (enabled) $ notifyLayers secs layers
     when (enabled && needsSwap) $ do
         renderer <- liftIO (backendGetRenderer =<< outputGetBackend output)
@@ -152,4 +152,4 @@ damageDisplay depth secs out@Output {outputRoots = output, outputLayout = layers
                     pixmanRegionUnion b2 (getOutputDamage output)
                     resetRegion (outputDamage out) Nothing
                 pure notEmpty
-        when (fromMaybe True reEnable) $ liftIO $ setOutputNeedsSwap output True
+        when (fromMaybe True reEnable) $ liftIO $ setOutputNeedsFrame output True

@@ -34,10 +34,10 @@ import Graphics.Pixman
 import Graphics.Wayland.WlRoots.Box (WlrBox (..), Point (..), boxTransform, scaleBox)
 import Graphics.Wayland.WlRoots.Backend (backendGetRenderer)
 import Graphics.Wayland.WlRoots.Output
-    ( WlrOutput, getOutputDamage , isOutputEnabled, getOutputNeedsSwap
+    ( WlrOutput, getOutputDamage , isOutputEnabled, getOutputNeedsFrame
     , invertOutputTransform, getOutputTransform
     , outputTransformedResolution, getTransMatrix
-    , swapOutputBuffers, getOutputScale, makeOutputCurrent, outputGetBackend
+    , commitOutput, getOutputScale, attachRender, outputGetBackend
     )
 import Graphics.Wayland.WlRoots.Render
     ( Renderer, Texture, rendererScissor, rendererClear, renderWithMatrix
@@ -66,9 +66,9 @@ import Waymonad.ViewSet (WSTag)
 import qualified Graphics.Wayland.WlRoots.Buffer as B
 
 renderOn :: Integer -> Ptr WlrOutput -> Ptr Renderer -> (Int -> Way vs ws a) -> Way vs ws (Maybe a)
-renderOn time output rend act = doJust (liftIO $ makeOutputCurrent output) $ \age -> do
+renderOn time output rend act = doJust (liftIO $ attachRender output) $ \age -> do
     ret <- liftIO . doRender rend output =<< unliftWay (act age)
-    void . liftIO $ swapOutputBuffers output (Just time) Nothing
+    void . liftIO $ commitOutput output
     pure $ Just ret
 
 renderDamaged :: Ptr Renderer -> Ptr WlrOutput -> PixmanRegion32 -> WlrBox -> IO () -> IO ()
@@ -247,7 +247,7 @@ scissorOutput rend output box = do
 frameHandler :: WSTag a => Double -> Output -> Way vs a ()
 frameHandler secs out@Output {outputRoots = output, outputLayout = layers} = do
     enabled <- liftIO $ isOutputEnabled output
-    needsSwap <- liftIO $ getOutputNeedsSwap output
+    needsSwap <- liftIO $ getOutputNeedsFrame output
     liftIO $ when enabled $ notifyLayers secs layers
 
     when (enabled && needsSwap) $ do
@@ -286,7 +286,7 @@ frameHandler secs out@Output {outputRoots = output, outputLayout = layers} = do
 fieteHandler :: WSTag a => Double -> Output -> Way vs a ()
 fieteHandler secs Output {outputRoots = output, outputLayout = layers} = do
     enabled <- liftIO $ isOutputEnabled output
-    needsSwap <- liftIO $ getOutputNeedsSwap output
+    needsSwap <- liftIO $ getOutputNeedsFrame output
     liftIO $ when enabled $ notifyLayers secs layers
     when (enabled && needsSwap) $ do
         renderer <- liftIO (backendGetRenderer =<< outputGetBackend output)

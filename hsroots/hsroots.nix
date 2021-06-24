@@ -1,17 +1,18 @@
 { mkDerivation, base, bytestring, composition, hayland, lib
 , hslibinput, pixman, text, unix, wayland, wlroots, xkbcommon
-, libX11, fetchFromGitHub
+, libX11, fetchFromGitHub, freerdp
 }:
 let
   wlroots' = wlroots.overrideAttrs (o: rec {
-    version = "0.4";
+    version = "0.6.0";
     src = fetchFromGitHub {
       owner = "swaywm";
       repo = "wlroots";
       rev = version;
-      sha256 = "MXce7dPibI7+T2gmOqd66gkcXAne+2D7KsZq63zjjb8=";
+      sha256 = "ZB7VXrcvwmZ7M+SvKsVkAAmcr9JXOm+sIIKjVSitrOU=";
     };
     mesonFlags = o.mesonFlags ++ ["-Dwerror=false"];
+    nativeBuildInputs = o.nativeBuildInputs ++ [freerdp];
   });
 in mkDerivation {
   pname = "hsroots";
