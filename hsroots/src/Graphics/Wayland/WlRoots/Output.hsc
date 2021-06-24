@@ -165,8 +165,7 @@ getOutputTransform ptr = do
     pure $ OutputTransform (fromIntegral val)
 
 data OutputMode = OutputMode
-    { modeFlags   :: Word32
-    , modeWidth   :: Word32
+    { modeWidth   :: Word32
     , modeHeight  :: Word32
     , modeRefresh :: Word32
     }
@@ -176,8 +175,7 @@ instance Storable OutputMode where
     alignment _ = #{alignment struct wlr_output_mode}
     sizeOf _ = #{size struct wlr_output_mode}
     peek ptr = OutputMode
-        <$> #{peek struct wlr_output_mode, flags} ptr
-        <*> #{peek struct wlr_output_mode, width} ptr
+        <$> #{peek struct wlr_output_mode, width} ptr
         <*> #{peek struct wlr_output_mode, height} ptr
         <*> #{peek struct wlr_output_mode, refresh} ptr
     poke = error "We do not poke output modes"

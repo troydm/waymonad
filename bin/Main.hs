@@ -70,11 +70,9 @@ import Waymonad.Navigation2D
 import Waymonad.Output (Output (outputRoots), addOutputToWork, setPreferdMode)
 import Waymonad.Protocols.Background
 import Waymonad.Protocols.DataControl
-import Waymonad.Protocols.GammaControl
 import Waymonad.Protocols.InputInhibit
 import Waymonad.Protocols.LinuxDMABuf
 import Waymonad.Protocols.DMAExport
-import Waymonad.Protocols.Screenshooter
 import Waymonad.Tabletv2
 import Waymonad.Types (WayHooks (..), OutputEffective (..))
 import Waymonad.Types.Core (WayKeyState, keystateAsInt, Seat (seatKeymap))
@@ -192,7 +190,6 @@ myConf modi = WayUserConf
     , wayUserConfInputAdd    = flip attachDevice "seat0"
     , wayUserConfDisplayHook =
         [ getFuseBracket (IPCGroup  [("IdleManager", Right $ idleIPC (Proxy :: Proxy IdleEvent))])
-        , getGammaBracket
         , getDataControlBracket
         , getFilterBracket filterUser
         , baseTimeBracket
@@ -209,7 +206,7 @@ myConf modi = WayUserConf
         , getTabletv2Bracket
         ]
     , wayUserConfBackendHook = [getIdleBracket 6e5 {- 10 minutes in ms -}, getLinuxDMABufBracket]
-    , wayUserConfPostHook    = [getScreenshooterBracket]
+    , wayUserConfPostHook    = []
     , wayUserConfCoreHooks   = WayHooks
         { wayHooksVWSChange       = wsScaleHook
         , wayHooksOutputMapping   = enterLeaveHook <> handlePointerSwitch <> SM.mappingChangeEvt <> managedStrutHandler
