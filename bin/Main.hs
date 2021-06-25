@@ -95,7 +95,6 @@ import qualified Waymonad.Hooks.OutputAdd as H
 import qualified Waymonad.Hooks.SeatMapping as SM
 import qualified Waymonad.Shells.XWayland as XWay
 import qualified Waymonad.Shells.XdgShell as Xdg
-import qualified Waymonad.Shells.XdgShellv6 as Xdgv6
 import qualified Waymonad.Shells.Layers as Layer
 
 import Waymonad.Main
@@ -215,7 +214,7 @@ myConf modi = WayUserConf
         , wayHooksNewOutput       = H.outputAddHook
         , wayHooksOutputEffective = layoutOutput . getChangedOutput <> const Layer.forceLayout
         }
-    , wayUserConfShells = [Xdg.makeShell, Xdgv6.makeShell, XWay.makeShell, Layer.makeShell]
+    , wayUserConfShells = [Xdg.makeShell, XWay.makeShell, Layer.makeShell]
     , wayUserConfLog = pure ()
     , wayUserConfOutputAdd = \out -> setPreferdMode (outputRoots out) $
         addOutputToWork out Nothing

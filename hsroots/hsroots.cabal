@@ -98,7 +98,6 @@ library
   exposed-modules:     Graphics.Wayland.WlRoots.XCursorManager
   exposed-modules:     Graphics.Wayland.WlRoots.XWayland
   exposed-modules:     Graphics.Wayland.WlRoots.XdgShell
-  exposed-modules:     Graphics.Wayland.WlRoots.XdgShellv6
   
   -- Modules included in this library but not exported.
   other-modules:       Utility
@@ -123,7 +122,6 @@ library
   pkgconfig-depends:   wayland-server, pixman-1, wlroots
 
   c-sources:           cbits/signal.c
-  c-sources:           cbits/xdg_helpers.c
   include-dirs: protocol
 
   --build-depends: dump-core
