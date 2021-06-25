@@ -4,12 +4,12 @@
 }:
 let
   wlroots' = wlroots.overrideAttrs (o: rec {
-    version = "0.9.1";
+    version = "0.11.0";
     src = fetchFromGitHub {
       owner = "swaywm";
       repo = "wlroots";
       rev = version;
-      sha256 = "H9Wx1cs+OJhwfCoNpLOW/Hjus2U5W4vfH0eVXHmpAFI=";
+      sha256 = "1zCuCPqpSAHe9MrVFzSZAkKuUb+9VcNcjcNzVEVppSE=";
     };
     mesonFlags = o.mesonFlags ++ ["-Dwerror=false"];
     nativeBuildInputs = o.nativeBuildInputs ++ [freerdp];

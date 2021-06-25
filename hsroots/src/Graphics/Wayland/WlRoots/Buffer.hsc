@@ -20,24 +20,26 @@ newtype WlrBuffer = WlrBuffer (Ptr WlrBuffer)
 
 getBufferResource :: WlrBuffer -> IO (Maybe (Ptr WlResource))
 getBufferResource (WlrBuffer ptr) = do
-    ret <- #{peek struct wlr_buffer, resource} ptr
+    ret <- #{peek struct wlr_client_buffer, resource} ptr
     if ret == nullPtr
         then pure Nothing
         else pure $ Just ret
 
-foreign import ccall unsafe "wlr_buffer_ref" c_ref :: Ptr WlrBuffer -> IO ()
+-- NB: This works because the first element in  a wlr_client_buffer is a wlr_buffer
+foreign import ccall unsafe "wlr_buffer_lock" c_ref :: Ptr WlrBuffer -> IO ()
 
 getBuffer :: WlrBuffer -> IO WlrBuffer
 getBuffer b@(WlrBuffer ptr) = c_ref ptr >> pure b
 
-foreign import ccall unsafe "wlr_buffer_unref" c_unref :: Ptr WlrBuffer -> IO ()
+-- NB: This works because the first element in  a wlr_client_buffer is a wlr_buffer
+foreign import ccall unsafe "wlr_buffer_unlock" c_unref :: Ptr WlrBuffer -> IO ()
 
 putBuffer :: WlrBuffer -> IO ()
 putBuffer (WlrBuffer ptr) = c_unref ptr
 
 getTexture :: WlrBuffer -> IO (Maybe (Ptr Texture))
 getTexture (WlrBuffer ptr) = do
-    ret <- #{peek struct wlr_buffer, texture} ptr
+    ret <- #{peek struct wlr_client_buffer, texture} ptr
     if ret == nullPtr
         then pure Nothing
         else pure $ Just ret

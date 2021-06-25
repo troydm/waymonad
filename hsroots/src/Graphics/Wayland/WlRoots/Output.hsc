@@ -51,7 +51,6 @@ module Graphics.Wayland.WlRoots.Output
     , outputTransformedResolution
     , invertOutputTransform
     , composeOutputTransform
-    , getOutputDamage
     , outputFromResource
     , outputResourceForClient
     , outputGetBackend
@@ -219,6 +218,7 @@ data OutputSignals = OutputSignals
     , outSignalTransform :: Ptr (WlSignal WlrOutput)
     , outSignalDestroy :: Ptr (WlSignal WlrOutput)
     , outSignalNeedsFrame :: Ptr (WlSignal WlrOutput)
+    , outSignalDamage :: Ptr (WlSignal WlrOutput)
     }
 
 getOutputSignals :: Ptr WlrOutput -> OutputSignals
@@ -229,6 +229,7 @@ getOutputSignals ptr = OutputSignals
     , outSignalTransform = #{ptr struct wlr_output, events.transform} ptr
     , outSignalDestroy = #{ptr struct wlr_output, events.destroy} ptr
     , outSignalNeedsFrame = #{ptr struct wlr_output, events.needs_frame} ptr
+    , outSignalDamage = #{ptr struct wlr_output, events.damage} ptr
     }
 
 getDataPtr :: Ptr WlrOutput -> Ptr (Ptr a)
@@ -289,9 +290,6 @@ foreign import ccall unsafe "wlr_output_transform_compose" c_transform_compose :
 composeOutputTransform :: OutputTransform -> OutputTransform -> OutputTransform
 composeOutputTransform (OutputTransform l) (OutputTransform r) =
     OutputTransform . fromIntegral $ c_transform_compose (fromIntegral l) (fromIntegral r)
-
-getOutputDamage :: Ptr WlrOutput -> PixmanRegion32
-getOutputDamage = PixmanRegion32 . #{ptr struct wlr_output, damage}
 
 foreign import ccall unsafe "wlr_output_from_resource" c_from_resource :: Ptr WlResource -> IO (Ptr WlrOutput)
 

@@ -36,7 +36,7 @@ import Graphics.Wayland.WlRoots.Render.Matrix (withMatrix, matrixProjectBox)
 import Graphics.Wayland.WlRoots.Render.Color (Color (..))
 import Graphics.Wayland.WlRoots.Box (WlrBox (..), Point (..))
 import Graphics.Wayland.WlRoots.Output
-    ( getOutputDamage , isOutputEnabled, getOutputNeedsFrame , outputTransformedResolution
+    ( isOutputEnabled, getOutputNeedsFrame , outputTransformedResolution
     , setOutputNeedsFrame, getOutputTransform, getTransMatrix, outputGetBackend
     )
 import Graphics.Pixman
@@ -104,20 +104,8 @@ damageDisplay depth secs out@Output {outputRoots = output, outputLayout = layers
         renderer <- liftIO (backendGetRenderer =<< outputGetBackend output)
         reEnable <- renderOn (floor $ secs * 1000) output renderer $ \age -> do
             tracker <- liftIO $ getOutputTracker depth out
-            let withDRegion = \act -> if age < 0 || age > 1
-                then withRegion $ \region -> do
-                        Point w h <- outputTransformedResolution output
-                        resetRegion region . Just $ WlrBox 0 0 w h
-                        act region
-                else withRegionCopy (outputDamage out) $ \region -> do
-                        let (b1, b2) = outputOldDamage out
-                        pixmanRegionUnion region b1
-                        pixmanRegionUnion region b2
-                        pixmanRegionUnion region (getOutputDamage output)
-                        mapM_ (pixmanRegionUnion region) $ damageRegions tracker
-                        act region
             renderBody <- makeCallback $ handleLayers secs output layers
-            liftIO $ withDRegion $ \region -> do
+            liftIO $ withRegion $ \region -> do
                 notEmpty <- pixmanRegionNotEmpty region
                 when notEmpty $ do
                     boxes <- pixmanRegionBoxes region
@@ -128,7 +116,6 @@ damageDisplay depth secs out@Output {outputRoots = output, outputLayout = layers
                     renderBody region
 
                     withRegion $ \dRegion -> do
-                        pixmanRegionUnion dRegion (getOutputDamage output)
                         pixmanRegionUnion dRegion (outputDamage out)
                         setOutputDamage tracker dRegion
 
@@ -149,7 +136,6 @@ damageDisplay depth secs out@Output {outputRoots = output, outputLayout = layers
                     let (b1, b2) = outputOldDamage out
                     copyRegion b1 b2
                     copyRegion b2 $ outputDamage out
-                    pixmanRegionUnion b2 (getOutputDamage output)
                     resetRegion (outputDamage out) Nothing
                 pure notEmpty
         when (fromMaybe True reEnable) $ liftIO $ setOutputNeedsFrame output True
