@@ -33,6 +33,7 @@ module Graphics.Wayland.WlRoots.Output
 
     , getEffectiveBox
     , getOutputBox
+    , getOutputDamage
     , getOutputName
     , getOutputScale
     , setOutputScale
@@ -69,9 +70,11 @@ import Data.Text (Text)
 import Data.Word (Word32, Word8)
 import Foreign.C.Error (throwErrnoIf_)
 import Foreign.C.Types (CInt(..))
-import Foreign.Marshal.Alloc (alloca)
+import Foreign.Marshal.Alloc (alloca, malloc)
 import Foreign.Ptr (Ptr, plusPtr, nullPtr)
 import Foreign.Storable (Storable(..))
+
+import System.IO.Unsafe (unsafePerformIO) -- FIXME: don't use
 
 import Graphics.Pixman
 
@@ -290,6 +293,15 @@ foreign import ccall unsafe "wlr_output_transform_compose" c_transform_compose :
 composeOutputTransform :: OutputTransform -> OutputTransform -> OutputTransform
 composeOutputTransform (OutputTransform l) (OutputTransform r) =
     OutputTransform . fromIntegral $ c_transform_compose (fromIntegral l) (fromIntegral r)
+
+-- FIXME: really back hack
+getOutputDamage :: Ptr WlrOutput -> PixmanRegion32
+getOutputDamage = const $ unsafePerformIO infRegion where
+    infRegion :: IO PixmanRegion32
+    infRegion = do
+        region <- allocateRegion
+        resetRegion region (Just WlrBox { boxX = 0, boxY = 0, boxWidth = fromIntegral (maxBound :: CInt), boxHeight = fromIntegral (maxBound :: CInt) })
+        pure region
 
 foreign import ccall unsafe "wlr_output_from_resource" c_from_resource :: Ptr WlResource -> IO (Ptr WlrOutput)
 

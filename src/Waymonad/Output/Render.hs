@@ -35,7 +35,7 @@ import Graphics.Wayland.WlRoots.Box (WlrBox (..), Point (..), boxTransform, scal
 import Graphics.Wayland.WlRoots.Backend (backendGetRenderer)
 import Graphics.Wayland.WlRoots.Output
     ( WlrOutput, isOutputEnabled, getOutputNeedsFrame
-    , invertOutputTransform, getOutputTransform
+    , getOutputDamage, invertOutputTransform, getOutputTransform
     , outputTransformedResolution, getTransMatrix
     , commitOutput, getOutputScale, attachRender, outputGetBackend
     )
@@ -253,8 +253,19 @@ frameHandler secs out@Output {outputRoots = output, outputLayout = layers} = do
     when (enabled && needsSwap) $ do
         renderer <- liftIO (backendGetRenderer =<< outputGetBackend (outputRoots out))
         void . renderOn (floor $ secs * 1e9) output renderer $ \age -> do
+            let withDRegion = \act -> if age < 0 || age > 2
+                then withRegion $ \region -> do
+                    Point w h <- outputTransformedResolution output
+                    resetRegion region . Just $ WlrBox 0 0 w h
+                    act region
+                else withRegionCopy (outputDamage out) $ \region -> do
+                    let (b1, b2) = outputOldDamage out
+                    pixmanRegionUnion region b1
+                    pixmanRegionUnion region b2
+                    pixmanRegionUnion region (getOutputDamage output)
+                    act region
             renderBody <- makeCallback $ handleLayers secs output layers
-            liftIO $ withRegion $ \region -> do -- FIXME: damage tracking
+            liftIO $ withDRegion $ \region -> do
                 notEmpty <- pixmanRegionNotEmpty region
                 when notEmpty $ do
                     boxes <- pixmanRegionBoxes region
@@ -269,6 +280,7 @@ frameHandler secs out@Output {outputRoots = output, outputLayout = layers} = do
                     let (b1, b2) = outputOldDamage out
                     copyRegion b1 b2
                     copyRegion b2 $ outputDamage out
+                    pixmanRegionUnion b2 (getOutputDamage output)
                     resetRegion (outputDamage out) Nothing
 
 fieteHandler :: WSTag a => Double -> Output -> Way vs a ()
