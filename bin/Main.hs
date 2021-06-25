@@ -102,7 +102,6 @@ import Waymonad.Main
 import "waymonad" Config
 
 import Graphics.Wayland.WlRoots.Util
-import Waymonad.Output.DamageDisplay
 
 wsSyms :: [Keysym]
 wsSyms =
@@ -223,7 +222,7 @@ myConf modi = WayUserConf
     , wayUserconfLoggers = Nothing
     , wayUserconfColor = Color 0.5 0 0 1
     , wayUserconfColors = mempty
-    , wayUserconfFramerHandler = Nothing -- Just $ damageDisplay 30
+    , wayUserconfFramerHandler = Nothing
     , wayUserconfXKBMap = const noPrefs
     }
 
