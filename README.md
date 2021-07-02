@@ -2,8 +2,7 @@
 
 Waymonad is a Wayland compositor made with wlroots that aims to feel like [xmonad](https://github.com/xmonad/xmonad).
 
-This is a fork of Waymonad that hopes to get it working again.
-Hopefully we'll get it merged back into waymonad/waymonad eventually.
+This is a fork of Waymonad that will hopefully be merged back into https://github.com/waymonad/waymonad eventually.
 
 ## Communication channels
 
@@ -17,23 +16,39 @@ This will give you an environment with GHC, Cabal, etc.
 
 Now you can simply run `cabal run` which hopefully will launch Waymonad.
 You can launch a program inside Waymonad by simply setting WAYLAND_DISPLAY
-before launching a program, i.e. `env WAYLAND_DISPLAY=wayland-1 pavucontrol`.
+before launching a program, e.g. `env WAYLAND_DISPLAY=wayland-1 pavucontrol`.
 If you're not already running a Wayland compositor, it will likely be `wayland-0` instead.
+
+## Status
+
+- It runs on wlroots 0.14.0 (latest as of now)
+- It is not documented nor user friendly
+- It crashes occasionally due to pointer handling bugs
+- It needs some internal redesigning (see Contributing)
 
 ## Contributing
 
-The current main goal is to update the wlroots we use to the latest one incrementally.
-To update the version used, set the revision in hsroots/hsroots.nix and replace
-the sha256 hash with `AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`.
-You can either fix what's broken by the update or remove the features broken,
-both are completely fine. The priority is most of all just using
-to the latest wlroots.
+Newcomers can start by trying to remove hayland/Graphics/Wayland/Scanner
+since it's made redundant by waymonad-scanner AFAICT, and then fixing
+the breakage that results in.
 
-### Future
+### hsroots
 
-Both hayland and hsroots also need a redesign such that there is a safe
-API that won't cause a segfault if you do something incorrect, but that
-will have to happen after updating wlroots to the latest version.
+hsroots needs a redesign so that it at least exposes a semi-safe interface, where you don't
+have to juggle pointers around like now. It also needs to run all wlroots functions from a
+single thread since it's not thread safe. Right now waymonad just isn't compiled with -threaded
+to avoid thread safety issues.
+The same is possibly true for hayland.
+
+The design I'm thinking of:
+- All wlroots function calls are delegated to a bound thread using a channel.
+- All "wlr objects" returned from the API will be wrapped in something like an `IORef Ptr`.
+- A signal handler on "wlr objects" will be installed onto the destroy event such that the above `IORef` is set to null atomically when the object is destroyed.
+- There will also have to be a finalizer on this that removes the signal handler from the destroy signal handler linked list.
+
+AFAICT there shouldn't be any thread-safety issues with the above.
+
+You are free to help implement the above.
 
 ## Troubleshooting
 
