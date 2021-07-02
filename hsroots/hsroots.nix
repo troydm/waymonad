@@ -5,14 +5,13 @@
 }:
 let
   wlroots' = wlroots.overrideAttrs (o: rec {
-    version = "0.13.0";
+    version = "0.14.0";
     src = fetchFromGitHub {
       owner = "swaywm";
       repo = "wlroots";
       rev = version;
-      sha256 = "/u2gx9oNG0T6TW/y3y7hhKZ8QXZog58VCs+Xq+2C9AY=";
+      sha256 = "aTTIezLuGvC7o4GXVKtvLUXMO60hwKjqRIFjr1dyeoA=";
     };
-    mesonFlags = o.mesonFlags ++ ["-Dwerror=false"];
   });
   s = "${wayland-scanner}/bin/wayland-scanner";
   protocols = runCommand "protocols" {} ''
