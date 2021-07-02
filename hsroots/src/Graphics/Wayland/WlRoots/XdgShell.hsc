@@ -73,7 +73,7 @@ import Control.Monad (when)
 
 data WlrXdgShell
 
-foreign import ccall unsafe "wlr_xdg_shell_create" c_shell_create :: Ptr DisplayServer -> IO (Ptr WlrXdgShell)
+foreign import ccall safe "wlr_xdg_shell_create" c_shell_create :: Ptr DisplayServer -> IO (Ptr WlrXdgShell)
 
 xdgShellCreate :: (Ptr WlrXdgSurface -> IO ()) -> DisplayServer -> IO (Ptr WlrXdgShell)
 xdgShellCreate new (DisplayServer ptr) = do
@@ -327,7 +327,7 @@ getTitle ptr = textFromNull =<< #{peek struct wlr_xdg_toplevel, title} ptr
 getAppId :: Ptr WlrXdgToplevel -> IO (Maybe Text)
 getAppId ptr = textFromNull =<< #{peek struct wlr_xdg_toplevel, app_id} ptr
 
-foreign import ccall unsafe "wlr_xdg_popup_unconstrain_from_box" c_popup_unconstrain_from_box :: Ptr WlrXdgPopup -> Ptr WlrBox -> IO ()
+foreign import ccall safe "wlr_xdg_popup_unconstrain_from_box" c_popup_unconstrain_from_box :: Ptr WlrXdgPopup -> Ptr WlrBox -> IO ()
 
 -- | Box in popups root toplevel coordinates
 unconstrainPopup :: Ptr WlrXdgPopup -> WlrBox -> IO ()

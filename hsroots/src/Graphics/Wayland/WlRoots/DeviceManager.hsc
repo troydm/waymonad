@@ -29,7 +29,7 @@ import qualified Data.Text.Encoding as E
 
 data WlrDeviceManager
 
-foreign import ccall unsafe "wlr_data_device_manager_create" c_manager_create :: Ptr DisplayServer -> IO (Ptr WlrDeviceManager)
+foreign import ccall safe "wlr_data_device_manager_create" c_manager_create :: Ptr DisplayServer -> IO (Ptr WlrDeviceManager)
 
 managerCreate :: DisplayServer -> IO (Ptr WlrDeviceManager)
 managerCreate (DisplayServer ptr) =

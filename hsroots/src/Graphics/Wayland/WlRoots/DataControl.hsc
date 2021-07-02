@@ -15,6 +15,6 @@ import Foreign.C.Error (throwErrnoIfNull)
 
 newtype DataControlManager = DataControlManager {unDCM :: Ptr DataControlManager}
 
-foreign import ccall unsafe "wlr_data_control_manager_v1_create" c_create :: Ptr DisplayServer -> IO (Ptr DataControlManager)
+foreign import ccall safe "wlr_data_control_manager_v1_create" c_create :: Ptr DisplayServer -> IO (Ptr DataControlManager)
 dataControlManagerCreate :: DisplayServer -> IO DataControlManager
 dataControlManagerCreate (DisplayServer dsp) = fmap DataControlManager .  throwErrnoIfNull "dataControlManagerCreate" $ c_create dsp

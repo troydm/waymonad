@@ -26,10 +26,10 @@ import Graphics.Wayland.WlRoots.Render (Renderer)
 
 data Backend
 
-foreign import ccall unsafe "wlr_backend_autocreate" c_backend_autocreate :: Ptr DisplayServer -> Ptr a -> IO (Ptr Backend)
+foreign import ccall safe "wlr_backend_autocreate" c_backend_autocreate :: Ptr DisplayServer -> IO (Ptr Backend)
 
 backendAutocreate :: DisplayServer -> IO (Ptr Backend)
-backendAutocreate (DisplayServer ptr) = throwErrnoIfNull "backendAutocreate" $ c_backend_autocreate ptr nullPtr
+backendAutocreate (DisplayServer ptr) = throwErrnoIfNull "backendAutocreate" $ c_backend_autocreate ptr
 
 
 foreign import ccall safe "wlr_backend_start" c_backend_start :: Ptr Backend -> IO Bool
@@ -65,7 +65,7 @@ foreign import ccall "wlr_backend_get_renderer" c_get_renderer :: Ptr Backend ->
 backendGetRenderer :: Ptr Backend -> IO (Ptr Renderer)
 backendGetRenderer = c_get_renderer
 
-foreign import ccall unsafe "wlr_backend_get_session" c_get_session :: Ptr Backend -> IO (Ptr WlrSession)
+foreign import ccall safe "wlr_backend_get_session" c_get_session :: Ptr Backend -> IO (Ptr WlrSession)
 
 getSession :: Ptr Backend -> IO (Maybe (Ptr WlrSession))
 getSession b = do

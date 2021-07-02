@@ -19,12 +19,12 @@ import Graphics.Wayland.Server (DisplayServer (..))
 import Graphics.Wayland.WlRoots.Backend
 import Graphics.Wayland.WlRoots.Input
 
-foreign import ccall unsafe "wlr_backend_is_headless" c_is_headless :: Ptr Backend -> IO Word8
+foreign import ccall safe "wlr_backend_is_headless" c_is_headless :: Ptr Backend -> IO Word8
 
 backendIsHeadless :: Ptr Backend -> IO Bool
 backendIsHeadless = fmap (/= 0) . c_is_headless
 
-foreign import ccall unsafe "wlr_input_device_is_headless" c_input_is_headless :: Ptr InputDevice -> IO Word8
+foreign import ccall safe "wlr_input_device_is_headless" c_input_is_headless :: Ptr InputDevice -> IO Word8
 
 inputDeviceIsHeadless :: Ptr InputDevice -> IO Bool
 inputDeviceIsHeadless = fmap (/= 0) . c_input_is_headless
@@ -38,7 +38,7 @@ addHeadlessInput backend devType = do
         then pure Nothing
         else Just <$> c_add_input backend (deviceTypeToInt $ devType nullPtr)
 
-foreign import ccall unsafe "wlr_headless_backend_create" c_headless_create :: Ptr DisplayServer -> IO (Ptr Backend)
+foreign import ccall safe "wlr_headless_backend_create" c_headless_create :: Ptr DisplayServer -> IO (Ptr Backend)
 
 createHeadlessBackend :: DisplayServer -> IO (Ptr Backend)
 createHeadlessBackend (DisplayServer ptr) = 

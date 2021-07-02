@@ -140,18 +140,18 @@ data SurfaceState = SurfaceState
     , surfaceStateActualHeight :: Word32
     }
 
-foreign import ccall unsafe "wlr_layer_shell_v1_create" c_create :: Ptr DisplayServer -> IO (Ptr LayerShell)
+foreign import ccall safe "wlr_layer_shell_v1_create" c_create :: Ptr DisplayServer -> IO (Ptr LayerShell)
 
 layerShellCreate :: DisplayServer -> IO LayerShell
 layerShellCreate (DisplayServer dsp) = LayerShell <$>
     throwErrnoIfNull "layerShellCreate" (c_create dsp)
 
-foreign import ccall unsafe "wlr_layer_surface_v1_configure" c_configure :: Ptr LayerSurface -> Word32 -> Word32 -> IO ()
+foreign import ccall safe "wlr_layer_surface_v1_configure" c_configure :: Ptr LayerSurface -> Word32 -> Word32 -> IO ()
 
 configureSurface :: LayerSurface -> Word32 -> Word32 -> IO ()
 configureSurface (LayerSurface ptr) width height = c_configure ptr width height
 
-foreign import ccall unsafe "wlr_layer_surface_v1_close" c_close :: Ptr LayerSurface -> IO ()
+foreign import ccall safe "wlr_layer_surface_v1_close" c_close :: Ptr LayerSurface -> IO ()
 
 closeSurface :: LayerSurface -> IO ()
 closeSurface = c_close . unLSS

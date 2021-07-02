@@ -122,7 +122,6 @@ library
   pkgconfig-depends:   wayland-server, pixman-1, wlroots
 
   c-sources:           cbits/signal.c
-  include-dirs: protocol
 
   --build-depends: dump-core
   --ghc-options: -fplugin=DumpCore -fplugin-opt DumpCore:core-html

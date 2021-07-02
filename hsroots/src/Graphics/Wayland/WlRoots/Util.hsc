@@ -22,7 +22,7 @@ logPrioToInt Error  = #{const WLR_ERROR}
 logPrioToInt Info   = #{const WLR_INFO}
 logPrioToInt Debug  = #{const WLR_DEBUG}
 
-foreign import ccall unsafe "wlr_log_init" c_log_init :: CInt -> Ptr a -> IO ()
+foreign import ccall safe "wlr_log_init" c_log_init :: CInt -> Ptr a -> IO ()
 
 setLogPrio :: LogPriority -> IO ()
 setLogPrio prio =

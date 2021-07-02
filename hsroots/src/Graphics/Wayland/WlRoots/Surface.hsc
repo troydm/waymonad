@@ -5,7 +5,6 @@ module Graphics.Wayland.WlRoots.Surface
     ( WlrSurface
     , surfaceGetTexture
 
-    , createSurface
     , surfaceGetRoot
 
     , WlrSurfaceState
@@ -51,10 +50,8 @@ where
 #define WLR_USE_UNSTABLE
 #include <wlr/types/wlr_surface.h>
 
-import Data.Composition ((.:))
 import Data.Int (Int32)
 import Data.Word (Word8, Word32)
-import Foreign.C.Error (throwErrnoIfNull)
 import Foreign.C.Types (CInt(..))
 import Foreign.Ptr (Ptr, castPtr, plusPtr, nullPtr)
 import Foreign.Storable (Storable(..))
@@ -68,7 +65,7 @@ import Graphics.Wayland.List (getListFromHead, getListElems, WlList)
 import Graphics.Wayland.Resource (WlResource)
 import Graphics.Wayland.WlRoots.Box (WlrBox(..), Point (..))
 import Graphics.Wayland.WlRoots.Output (WlrOutput)
-import Graphics.Wayland.WlRoots.Render (Texture, Renderer)
+import Graphics.Wayland.WlRoots.Render (Texture)
 import Graphics.Wayland.WlRoots.Buffer (WlrBuffer (..))
 
 data WlrSurface
@@ -78,11 +75,6 @@ pokeSurfaceData = #{poke struct wlr_surface, data}
 
 peekSurfaceData :: Ptr WlrSurface -> IO (Ptr a)
 peekSurfaceData = #{peek struct wlr_surface, data}
-
-foreign import ccall unsafe "wlr_surface_create" c_create :: Ptr WlResource -> Ptr Renderer -> IO (Ptr WlrSurface)
-
-createSurface :: Ptr WlResource -> Ptr Renderer -> IO (Ptr WlrSurface)
-createSurface = throwErrnoIfNull "createSurface" .: c_create
 
 getSurfaceResource :: Ptr WlrSurface -> IO (Ptr WlResource)
 getSurfaceResource = #{peek struct wlr_surface, resource}
@@ -100,7 +92,7 @@ getWlrSurfaceEvents ptr = WlrSurfaceEvents
     , wlrSurfaceEvtCommit = #{ptr struct wlr_surface, events.commit} ptr
     }
 
-foreign import ccall unsafe "wlr_surface_get_texture" c_get_texture :: Ptr WlrSurface -> IO (Ptr Texture)
+foreign import ccall safe "wlr_surface_get_texture" c_get_texture :: Ptr WlrSurface -> IO (Ptr Texture)
 
 surfaceGetTexture :: Ptr WlrSurface -> IO (Maybe (Ptr Texture))
 surfaceGetTexture ptr = do
@@ -109,7 +101,7 @@ surfaceGetTexture ptr = do
         then Nothing
         else Just ret
 
-foreign import ccall unsafe "wlr_surface_get_root_surface" c_get_root_surface :: Ptr WlrSurface -> IO (Ptr WlrSurface)
+foreign import ccall safe "wlr_surface_get_root_surface" c_get_root_surface :: Ptr WlrSurface -> IO (Ptr WlrSurface)
 
 surfaceGetRoot :: Ptr WlrSurface -> IO (Ptr WlrSurface)
 surfaceGetRoot = c_get_root_surface
@@ -146,7 +138,7 @@ surfaceGetSize :: Ptr WlrSurface -> IO Point
 surfaceGetSize = stateGetSize . getCurrentState
 
 newtype WlrFrameCallback = WlrFrameCallback (Ptr WlList)
-foreign import ccall unsafe "wl_resource_from_link" c_resource_from_link :: Ptr WlList -> IO (Ptr WlResource)
+foreign import ccall safe "wl_resource_from_link" c_resource_from_link :: Ptr WlList -> IO (Ptr WlResource)
 
 callbackGetResource :: WlrFrameCallback -> IO (Ptr WlResource)
 callbackGetResource (WlrFrameCallback ptr) =

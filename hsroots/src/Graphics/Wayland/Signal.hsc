@@ -33,9 +33,9 @@ data WlList
 newtype WlListener a = WlListener (Ptr a -> IO ())
 data ListenerToken = forall a. ListenerToken (ForeignPtr (WlListener a))
 
-foreign import ccall unsafe "c_signal_add" c_signal_add :: Ptr (WlSignal a) -> Ptr (WlListener a) -> IO ()
-foreign import ccall unsafe "wl_list_init" c_list_init :: Ptr WlList -> IO ()
-foreign import ccall unsafe "wl_list_remove" c_list_remove :: Ptr WlList -> IO ()
+foreign import ccall safe "c_signal_add" c_signal_add :: Ptr (WlSignal a) -> Ptr (WlListener a) -> IO ()
+foreign import ccall safe "wl_list_init" c_list_init :: Ptr WlList -> IO ()
+foreign import ccall safe "wl_list_remove" c_list_remove :: Ptr WlList -> IO ()
 
 destroyWlListener :: forall a. Ptr (WlListener a) -> IO ()
 destroyWlListener ptr = do

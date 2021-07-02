@@ -14,7 +14,7 @@ import Graphics.Wayland.Server (DisplayServer (..))
 
 newtype ExportDMABufManager = ExportDMABufManager (Ptr ExportDMABufManager)
 
-foreign import ccall unsafe "wlr_export_dmabuf_manager_v1_create" c_create :: Ptr DisplayServer -> IO (Ptr ExportDMABufManager)
+foreign import ccall safe "wlr_export_dmabuf_manager_v1_create" c_create :: Ptr DisplayServer -> IO (Ptr ExportDMABufManager)
 
 createDMAExporter :: DisplayServer -> IO ExportDMABufManager
 createDMAExporter (DisplayServer ptr) = ExportDMABufManager <$>

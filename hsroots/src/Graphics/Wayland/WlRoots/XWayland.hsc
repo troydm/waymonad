@@ -63,7 +63,7 @@ import Utility (textFromNull)
 
 data XWayland
 
-foreign import ccall unsafe "wlr_xwayland_create" c_xwayland_create :: Ptr DisplayServer -> Ptr WlrCompositor -> Bool -> IO (Ptr XWayland)
+foreign import ccall safe "wlr_xwayland_create" c_xwayland_create :: Ptr DisplayServer -> Ptr WlrCompositor -> Bool -> IO (Ptr XWayland)
 
 xwaylandCreate :: DisplayServer -> Ptr WlrCompositor -> Bool -> IO (Ptr XWayland)
 xwaylandCreate (DisplayServer ptr) comp lazy =

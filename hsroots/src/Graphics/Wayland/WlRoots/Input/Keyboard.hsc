@@ -78,13 +78,13 @@ getKeyDataPtr :: Ptr WlrKeyboard -> Ptr (Ptr a)
 getKeyDataPtr = #{ptr struct wlr_keyboard, data}
 
 keyStateFromInt :: CInt -> KeyState
-keyStateFromInt #{const WLR_KEY_RELEASED} = KeyReleased
-keyStateFromInt #{const WLR_KEY_PRESSED} = KeyPressed
+keyStateFromInt #{const WL_KEYBOARD_KEY_STATE_RELEASED} = KeyReleased
+keyStateFromInt #{const WL_KEYBOARD_KEY_STATE_PRESSED} = KeyPressed
 keyStateFromInt x = error $ "Got invalid KeyState: " ++ show x
 
 keyStateToInt :: Num a => KeyState -> a
-keyStateToInt KeyReleased = #{const WLR_KEY_RELEASED}
-keyStateToInt KeyPressed = #{const WLR_KEY_PRESSED}
+keyStateToInt KeyReleased = #{const WL_KEYBOARD_KEY_STATE_RELEASED}
+keyStateToInt KeyPressed = #{const WL_KEYBOARD_KEY_STATE_PRESSED}
 
 
 data EventKey = EventKey
@@ -132,7 +132,7 @@ readModifiers ptr = Modifiers
     <*> #{peek struct wlr_keyboard, modifiers.locked} ptr
     <*> #{peek struct wlr_keyboard, modifiers.group} ptr
 
-foreign import ccall unsafe "wlr_keyboard_get_modifiers" c_get_modifiers :: Ptr WlrKeyboard -> IO Word32
+foreign import ccall safe "wlr_keyboard_get_modifiers" c_get_modifiers :: Ptr WlrKeyboard -> IO Word32
 
 getModifiers :: Ptr WlrKeyboard -> IO Word32
 getModifiers = c_get_modifiers

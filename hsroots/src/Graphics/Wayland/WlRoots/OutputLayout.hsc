@@ -106,7 +106,7 @@ removeOutput :: Ptr WlrOutputLayout -> Ptr WlrOutput -> IO ()
 removeOutput layout output =
     c_output_remove layout output
 
-foreign import ccall unsafe "wlr_output_layout_get_box" c_get_box :: Ptr WlrOutputLayout -> Ptr WlrOutput -> IO (Ptr WlrBox)
+foreign import ccall safe "wlr_output_layout_get_box" c_get_box :: Ptr WlrOutputLayout -> Ptr WlrOutput -> IO (Ptr WlrBox)
 
 getOutputLayoutBox :: Ptr WlrOutputLayout -> Ptr WlrOutput -> IO WlrBox
 getOutputLayoutBox layout out = peek =<< c_get_box layout out

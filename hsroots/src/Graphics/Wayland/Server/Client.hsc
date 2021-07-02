@@ -13,7 +13,7 @@ import Graphics.Wayland.Signal
     , makeListenerPtr
     )
 
-foreign import ccall unsafe "wl_client_add_destroy_listener" c_add_listener :: Ptr Client -> Ptr (WlListener Client) -> IO ()
+foreign import ccall safe "wl_client_add_destroy_listener" c_add_listener :: Ptr Client -> Ptr (WlListener Client) -> IO ()
 
 addDestroyListener :: Client -> (Client -> IO ()) -> IO ()
 addDestroyListener (Client c) fun = do

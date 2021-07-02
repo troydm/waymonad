@@ -79,7 +79,7 @@ import Control.Monad (when)
 
 data WlrXdgShell
 
-foreign import ccall unsafe "wlr_xdg_shell_v6_create" c_shell_create :: Ptr DisplayServer -> IO (Ptr WlrXdgShell)
+foreign import ccall safe "wlr_xdg_shell_v6_create" c_shell_create :: Ptr DisplayServer -> IO (Ptr WlrXdgShell)
 
 xdgShellCreate :: (Ptr WlrXdgSurface -> IO ()) -> DisplayServer -> IO (Ptr WlrXdgShell)
 xdgShellCreate new (DisplayServer ptr) = do
@@ -369,7 +369,7 @@ data XdgPosAdjust
 
 data WlrXdgPositioner
 
-foreign import ccall unsafe "wlr_xdg_positioner_v6_get_geometry_c" c_positioner_get_geometry :: Ptr WlrXdgPositioner -> Ptr WlrBox -> IO ()
+foreign import ccall safe "wlr_xdg_positioner_v6_get_geometry_c" c_positioner_get_geometry :: Ptr WlrXdgPositioner -> Ptr WlrBox -> IO ()
 
 getPositionerGeometry :: Ptr WlrXdgPositioner -> IO WlrBox
 getPositionerGeometry pos = alloca $ \bPtr -> do
@@ -377,7 +377,7 @@ getPositionerGeometry pos = alloca $ \bPtr -> do
     peek bPtr
 
 
-foreign import ccall unsafe "wlr_xdg_popup_v6_get_anchor_point" c_popup_get_anchor_point :: Ptr WlrXdgPopup -> Ptr CInt -> Ptr CInt -> IO ()
+foreign import ccall safe "wlr_xdg_popup_v6_get_anchor_point" c_popup_get_anchor_point :: Ptr WlrXdgPopup -> Ptr CInt -> Ptr CInt -> IO ()
 
 getPopupAnchor :: Ptr WlrXdgPopup -> IO (Int, Int)
 getPopupAnchor pop = alloca $ \xPtr -> alloca $ \yPtr -> do
@@ -387,7 +387,7 @@ getPopupAnchor pop = alloca $ \xPtr -> alloca $ \yPtr -> do
     pure (fromIntegral x, fromIntegral y)
 
 
-foreign import ccall unsafe "wlr_xdg_popup_v6_unconstrain_from_box" c_popup_unconstrain_from_box :: Ptr WlrXdgPopup -> Ptr WlrBox -> IO ()
+foreign import ccall safe "wlr_xdg_popup_v6_unconstrain_from_box" c_popup_unconstrain_from_box :: Ptr WlrXdgPopup -> Ptr WlrBox -> IO ()
 
 -- | Box in popups root toplevel coordinates
 unconstrainPopup :: Ptr WlrXdgPopup -> WlrBox -> IO ()

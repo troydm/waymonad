@@ -110,7 +110,7 @@ getSerial = fmap (makeMaybe . E.decodeUtf8) . unsafePackCString . #{ptr struct w
 getOutputPosition :: Ptr WlrOutput -> IO Point
 getOutputPosition _ = pure $ Point 0 0
 
-foreign import ccall unsafe "wlr_output_enable" c_output_enable :: Ptr WlrOutput -> Bool -> IO ()
+foreign import ccall safe "wlr_output_enable" c_output_enable :: Ptr WlrOutput -> Bool -> IO ()
 
 outputEnable :: Ptr WlrOutput -> IO ()
 outputEnable = flip c_output_enable True
@@ -121,7 +121,7 @@ outputDisable = flip c_output_enable False
 isOutputEnabled :: Ptr WlrOutput -> IO Bool
 isOutputEnabled = fmap (/= (0 :: Word8)) . #{peek struct wlr_output, enabled}
 
-foreign import ccall unsafe "wlr_output_attach_render" c_attach_render :: Ptr WlrOutput -> Ptr CInt -> IO Bool
+foreign import ccall safe "wlr_output_attach_render" c_attach_render :: Ptr WlrOutput -> Ptr CInt -> IO Bool
 attachRender :: Ptr WlrOutput -> IO (Maybe Int)
 attachRender out = alloca $ \ptr -> do
     ret <- c_attach_render out ptr
@@ -130,18 +130,18 @@ attachRender out = alloca $ \ptr -> do
         else Just . fromIntegral <$> peek ptr
 
 
---foreign import ccall unsafe "wlr_output_set_damage" c_set_damage :: Ptr WlrOutput -> Ptr PixmanRegion32 -> IO Bool
-foreign import ccall unsafe "wlr_output_commit" c_commit :: Ptr WlrOutput -> IO Bool
+--foreign import ccall safe "wlr_output_set_damage" c_set_damage :: Ptr WlrOutput -> Ptr PixmanRegion32 -> IO Bool
+foreign import ccall safe "wlr_output_commit" c_commit :: Ptr WlrOutput -> IO Bool
 commitOutput :: Ptr WlrOutput -> IO Bool
 commitOutput = c_commit
 
-foreign import ccall unsafe "wlr_output_destroy" c_output_destroy :: Ptr WlrOutput -> IO ()
+foreign import ccall safe "wlr_output_destroy" c_output_destroy :: Ptr WlrOutput -> IO ()
 
 destroyOutput :: Ptr WlrOutput -> IO ()
 destroyOutput = c_output_destroy
 
 
-foreign import ccall unsafe "wlr_output_effective_resolution" c_effective_resolution :: Ptr WlrOutput -> Ptr CInt -> Ptr CInt -> IO ()
+foreign import ccall safe "wlr_output_effective_resolution" c_effective_resolution :: Ptr WlrOutput -> Ptr CInt -> Ptr CInt -> IO ()
 
 effectiveResolution :: Ptr WlrOutput -> IO (Int, Int)
 effectiveResolution output = alloca $ \width -> alloca $ \height -> do
@@ -217,8 +217,6 @@ getTransMatrix =
 data OutputSignals = OutputSignals
     { outSignalFrame :: Ptr (WlSignal WlrOutput)
     , outSignalMode :: Ptr (WlSignal WlrOutput)
-    , outSignalScale :: Ptr (WlSignal WlrOutput)
-    , outSignalTransform :: Ptr (WlSignal WlrOutput)
     , outSignalDestroy :: Ptr (WlSignal WlrOutput)
     , outSignalNeedsFrame :: Ptr (WlSignal WlrOutput)
     , outSignalDamage :: Ptr (WlSignal WlrOutput)
@@ -228,8 +226,6 @@ getOutputSignals :: Ptr WlrOutput -> OutputSignals
 getOutputSignals ptr = OutputSignals
     { outSignalFrame = #{ptr struct wlr_output, events.frame} ptr
     , outSignalMode = #{ptr struct wlr_output, events.mode} ptr
-    , outSignalScale = #{ptr struct wlr_output, events.scale} ptr
-    , outSignalTransform = #{ptr struct wlr_output, events.transform} ptr
     , outSignalDestroy = #{ptr struct wlr_output, events.destroy} ptr
     , outSignalNeedsFrame = #{ptr struct wlr_output, events.needs_frame} ptr
     , outSignalDamage = #{ptr struct wlr_output, events.damage} ptr
@@ -269,7 +265,7 @@ foreign import ccall "wlr_output_destroy_global" c_destroy_global :: Ptr WlrOutp
 destroyOutputGlobal :: Ptr WlrOutput -> IO ()
 destroyOutputGlobal = c_destroy_global
 
-foreign import ccall unsafe "wlr_output_transformed_resolution" c_transformed_resolution :: Ptr WlrOutput -> Ptr CInt -> Ptr CInt -> IO ()
+foreign import ccall safe "wlr_output_transformed_resolution" c_transformed_resolution :: Ptr WlrOutput -> Ptr CInt -> Ptr CInt -> IO ()
 
 outputTransformedResolution :: Ptr WlrOutput -> IO Point
 outputTransformedResolution ptr = alloca $ \xptr -> alloca $ \yptr -> do
@@ -278,17 +274,17 @@ outputTransformedResolution ptr = alloca $ \xptr -> alloca $ \yptr -> do
     y <- peek yptr
     pure $ Point (fromIntegral x) (fromIntegral y)
 
-foreign import ccall unsafe "wlr_output_schedule_frame" c_schedule_frame :: Ptr WlrOutput -> IO ()
+foreign import ccall safe "wlr_output_schedule_frame" c_schedule_frame :: Ptr WlrOutput -> IO ()
 
 scheduleOutputFrame :: Ptr WlrOutput -> IO ()
 scheduleOutputFrame = c_schedule_frame
 
-foreign import ccall unsafe "wlr_output_transform_invert" c_transform_invert :: CInt -> CInt
+foreign import ccall safe "wlr_output_transform_invert" c_transform_invert :: CInt -> CInt
 
 invertOutputTransform :: OutputTransform -> OutputTransform
 invertOutputTransform (OutputTransform val) = OutputTransform . fromIntegral $  c_transform_invert (fromIntegral val)
 
-foreign import ccall unsafe "wlr_output_transform_compose" c_transform_compose :: CInt -> CInt -> CInt
+foreign import ccall safe "wlr_output_transform_compose" c_transform_compose :: CInt -> CInt -> CInt
 
 composeOutputTransform :: OutputTransform -> OutputTransform -> OutputTransform
 composeOutputTransform (OutputTransform l) (OutputTransform r) =
@@ -303,7 +299,7 @@ getOutputDamage = const $ unsafePerformIO infRegion where
         resetRegion region (Just WlrBox { boxX = 0, boxY = 0, boxWidth = fromIntegral (maxBound :: CInt), boxHeight = fromIntegral (maxBound :: CInt) })
         pure region
 
-foreign import ccall unsafe "wlr_output_from_resource" c_from_resource :: Ptr WlResource -> IO (Ptr WlrOutput)
+foreign import ccall safe "wlr_output_from_resource" c_from_resource :: Ptr WlResource -> IO (Ptr WlrOutput)
 
 outputFromResource :: Ptr WlResource -> IO (Ptr WlrOutput)
 outputFromResource = c_from_resource

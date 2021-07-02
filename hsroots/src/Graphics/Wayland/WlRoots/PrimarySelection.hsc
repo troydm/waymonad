@@ -18,7 +18,7 @@ import Graphics.Wayland.Global (WlGlobal)
 
 newtype PrimarySelectionManager = PrimarySelectionManager { unPSM :: Ptr PrimarySelectionManager}
 
-foreign import ccall unsafe "wlr_primary_selection_device_manager_create" c_create :: Ptr DisplayServer -> IO (Ptr PrimarySelectionManager)
+foreign import ccall safe "wlr_primary_selection_device_manager_create" c_create :: Ptr DisplayServer -> IO (Ptr PrimarySelectionManager)
 
 createPrimaryDeviceManager :: DisplayServer -> IO PrimarySelectionManager
 createPrimaryDeviceManager (DisplayServer ptr) = fmap PrimarySelectionManager .

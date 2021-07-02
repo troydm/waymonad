@@ -203,8 +203,6 @@ handleOutputAdd' handler hook output = do
 
     let signals = getOutputSignals output
     modeH <- setSignalHandler (outSignalMode signals) (const $ outputEffectiveChanged out)
-    scaleH <- setSignalHandler (outSignalScale signals) (const $ outputEffectiveChanged out)
-    transformH <- setSignalHandler (outSignalTransform signals) (const $ outputEffectiveChanged out)
     needsSwapH <- setSignalHandler (outSignalNeedsFrame signals) (const . liftIO $ scheduleOutputFrame (outputRoots out))
 
     hook out
@@ -213,7 +211,7 @@ handleOutputAdd' handler hook output = do
     frameH <- liftIO $ attachFrame frameCB output
 
     setDestroyHandler (outSignalDestroy signals) (\dout -> do
-        liftIO $ mapM_ removeListener [modeH, scaleH, transformH, needsSwapH, frameH]
+        liftIO $ mapM_ removeListener [modeH, needsSwapH, frameH]
         handleOutputRemove dout
                                                  )
 

@@ -76,23 +76,23 @@ instance Storable PixmanBox32 where
         #{poke struct pixman_box32, x2} ptr x2
         #{poke struct pixman_box32, y2} ptr y2
 
-foreign import ccall unsafe "pixman_region32_extents" c_32_extends :: Ptr PixmanRegion32 -> IO (Ptr PixmanBox32)
+foreign import ccall safe "pixman_region32_extents" c_32_extends :: Ptr PixmanRegion32 -> IO (Ptr PixmanBox32)
 
 pixmanRegionExtents :: PixmanRegion32 -> IO PixmanBox32
 pixmanRegionExtents region = peek =<< withRegion32 region c_32_extends
 
-foreign import ccall unsafe "pixman_region32_not_empty" c_32_not_empty :: Ptr PixmanRegion32 -> IO Bool
+foreign import ccall safe "pixman_region32_not_empty" c_32_not_empty :: Ptr PixmanRegion32 -> IO Bool
 
 pixmanRegionNotEmpty :: PixmanRegion32 -> IO Bool
 pixmanRegionNotEmpty = flip withRegion32 c_32_not_empty
 
-foreign import ccall unsafe "pixman_region32_translate" c_32_translate :: Ptr PixmanRegion32 -> CInt -> CInt -> IO ()
+foreign import ccall safe "pixman_region32_translate" c_32_translate :: Ptr PixmanRegion32 -> CInt -> CInt -> IO ()
 
 pixmanRegionTranslate :: PixmanRegion32 -> Int -> Int -> IO ()
 pixmanRegionTranslate region x y = withRegion32 region $ \ptr ->
     c_32_translate ptr (fromIntegral x) (fromIntegral y)
 
-foreign import ccall unsafe "pixman_region32_copy" c_32_copy :: Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> IO ()
+foreign import ccall safe "pixman_region32_copy" c_32_copy :: Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> IO ()
 
 withRegionCopy :: PixmanRegion32 -> (PixmanRegion32 -> IO a) -> IO a
 withRegionCopy orig act = withRegion32 orig $ \original -> withRegion $ \copy -> do
@@ -104,10 +104,10 @@ copyRegion dst src = withRegion32 dst $ \dstPtr ->
     withRegion32 src $ \srcPtr -> 
         c_32_copy dstPtr srcPtr
 
-foreign import ccall unsafe "pixman_region32_init" c_32_init :: Ptr PixmanRegion32 -> IO ()
-foreign import ccall unsafe "pixman_region32_init_rect" c_32_init_rect :: Ptr PixmanRegion32 -> CInt -> CInt -> CUInt -> CUInt -> IO ()
-foreign import ccall unsafe "pixman_region32_clear" c_32_clear :: Ptr PixmanRegion32 -> IO ()
-foreign import ccall unsafe "pixman_region32_fini" c_32_fini :: Ptr PixmanRegion32 -> IO ()
+foreign import ccall safe "pixman_region32_init" c_32_init :: Ptr PixmanRegion32 -> IO ()
+foreign import ccall safe "pixman_region32_init_rect" c_32_init_rect :: Ptr PixmanRegion32 -> CInt -> CInt -> CUInt -> CUInt -> IO ()
+foreign import ccall safe "pixman_region32_clear" c_32_clear :: Ptr PixmanRegion32 -> IO ()
+foreign import ccall safe "pixman_region32_fini" c_32_fini :: Ptr PixmanRegion32 -> IO ()
 
 withRegion :: (PixmanRegion32 -> IO a) -> IO a
 withRegion act = allocaBytes #{size struct pixman_region32} $ \reg -> bracket_
@@ -139,7 +139,7 @@ resetRegion reg box = withRegion32 reg $ \ptr -> do
                 (fromIntegral w)
                 (fromIntegral h)
 
-foreign import ccall unsafe "pixman_region32_rectangles" c_32_rectangles :: Ptr PixmanRegion32 -> Ptr CInt -> IO (Ptr PixmanBox32)
+foreign import ccall safe "pixman_region32_rectangles" c_32_rectangles :: Ptr PixmanRegion32 -> Ptr CInt -> IO (Ptr PixmanBox32)
 
 pixmanRegionBoxes :: PixmanRegion32 -> IO [PixmanBox32]
 pixmanRegionBoxes region = alloca $ \nPtr -> withRegion32 region $ \reg -> do
@@ -147,21 +147,21 @@ pixmanRegionBoxes region = alloca $ \nPtr -> withRegion32 region $ \reg -> do
     num <- peek nPtr
     peekArray (fromIntegral num) ret
 
-foreign import ccall unsafe "pixman_region32_union" c_32_union :: Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> IO ()
+foreign import ccall safe "pixman_region32_union" c_32_union :: Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> IO ()
 
 pixmanRegionUnion :: PixmanRegion32 -> PixmanRegion32 -> IO ()
 pixmanRegionUnion dst src = withRegion32 dst $ \dstPtr ->
     withRegion32 src $ \srcPtr ->
         c_32_union dstPtr dstPtr srcPtr
 
-foreign import ccall unsafe "pixman_region32_intersect" c_32_intersect :: Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> IO ()
+foreign import ccall safe "pixman_region32_intersect" c_32_intersect :: Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> IO ()
 
 pixmanRegionIntersect :: PixmanRegion32 -> PixmanRegion32 -> IO ()
 pixmanRegionIntersect dst src = withRegion32 dst $ \dstPtr ->
     withRegion32 src $ \srcPtr ->
         c_32_intersect dstPtr dstPtr srcPtr
 
-foreign import ccall unsafe "pixman_region32_subtract" c_32_subtract :: Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> IO ()
+foreign import ccall safe "pixman_region32_subtract" c_32_subtract :: Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> Ptr PixmanRegion32 -> IO ()
 
 pixmanRegionSubtract :: PixmanRegion32 -> PixmanRegion32 -> IO ()
 pixmanRegionSubtract reg sub = withRegion32 reg $ \regPtr ->

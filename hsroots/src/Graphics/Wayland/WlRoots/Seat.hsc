@@ -129,7 +129,7 @@ keyboardNotifyEnter :: Ptr WlrSeat -> Ptr WlrSurface -> Ptr Word32 -> CSize -> P
 keyboardNotifyEnter = c_keyboard_enter
 
 -- struct wlr_keyboard *wlr_seat_get_keyboard(struct wlr_seat *seat);
-foreign import ccall unsafe "wlr_seat_get_keyboard" c_get_keyboard :: Ptr WlrSeat -> IO (Ptr WlrKeyboard)
+foreign import ccall safe "wlr_seat_get_keyboard" c_get_keyboard :: Ptr WlrSeat -> IO (Ptr WlrKeyboard)
 
 getSeatKeyboard :: Ptr WlrSeat -> IO (Maybe (Ptr WlrKeyboard))
 getSeatKeyboard seat = do
@@ -172,7 +172,7 @@ foreign import ccall "wlr_seat_keyboard_notify_modifiers" c_notify_modifiers :: 
 keyboardNotifyModifiers :: Ptr WlrSeat -> Ptr KeyboardModifiers -> IO ()
 keyboardNotifyModifiers = c_notify_modifiers
 
-foreign import ccall unsafe "wlr_seat_set_keyboard" c_set_keyboard :: Ptr WlrSeat  -> Ptr InputDevice -> IO ()
+foreign import ccall safe "wlr_seat_set_keyboard" c_set_keyboard :: Ptr WlrSeat  -> Ptr InputDevice -> IO ()
 
 seatSetKeyboard :: Ptr WlrSeat -> Ptr InputDevice -> IO ()
 seatSetKeyboard = c_set_keyboard

@@ -45,37 +45,37 @@ withIdentity act = withMatrix $ \m -> do
     act m
 
 
-foreign import ccall unsafe "wlr_matrix_identity" c_matrix_identity :: Ptr CFloat -> IO ()
+foreign import ccall safe "wlr_matrix_identity" c_matrix_identity :: Ptr CFloat -> IO ()
 
 matrixIdentity :: Matrix -> IO ()
 matrixIdentity = c_matrix_identity . unMatrix
 
 
-foreign import ccall unsafe "wlr_matrix_translate" c_matrix_translate :: Ptr CFloat -> CFloat -> CFloat -> IO ()
+foreign import ccall safe "wlr_matrix_translate" c_matrix_translate :: Ptr CFloat -> CFloat -> CFloat -> IO ()
 
 matrixTranslate :: Matrix -> Float -> Float -> IO ()
 matrixTranslate (Matrix p) x y = c_matrix_translate p (CFloat x) (CFloat y)
 
 
-foreign import ccall unsafe "wlr_matrix_scale" c_matrix_scale :: Ptr CFloat -> CFloat -> CFloat -> IO ()
+foreign import ccall safe "wlr_matrix_scale" c_matrix_scale :: Ptr CFloat -> CFloat -> CFloat -> IO ()
 
 matrixScale :: Matrix -> Float -> Float -> IO ()
 matrixScale (Matrix p) x y = c_matrix_scale p (CFloat x) (CFloat y)
 
 
-foreign import ccall unsafe "wlr_matrix_rotate" c_matrix_rotate :: Ptr CFloat -> CFloat -> IO ()
+foreign import ccall safe "wlr_matrix_rotate" c_matrix_rotate :: Ptr CFloat -> CFloat -> IO ()
 
 matrixRotate :: Matrix -> Float -> IO ()
 matrixRotate (Matrix p) r = c_matrix_rotate p (CFloat r)
 
 
-foreign import ccall unsafe "wlr_matrix_multiply" c_matrix_mul :: Ptr CFloat -> Ptr CFloat -> Ptr CFloat -> IO ()
+foreign import ccall safe "wlr_matrix_multiply" c_matrix_mul :: Ptr CFloat -> Ptr CFloat -> Ptr CFloat -> IO ()
 
 matrixMul :: Matrix -> Matrix -> Matrix -> IO ()
 matrixMul (Matrix x) (Matrix y) (Matrix o) = c_matrix_mul x y o
 
 
-foreign import ccall unsafe "wlr_matrix_project_box" c_project_box :: Ptr CFloat -> Ptr WlrBox -> CInt -> CFloat -> Ptr CFloat -> IO ()
+foreign import ccall safe "wlr_matrix_project_box" c_project_box :: Ptr CFloat -> Ptr WlrBox -> CInt -> CFloat -> Ptr CFloat -> IO ()
 
 matrixProjectBox :: Matrix -> WlrBox -> OutputTransform -> Float -> Matrix -> IO ()
 matrixProjectBox (Matrix mat) box (OutputTransform transform) rotation (Matrix projection) = with box $ \boxPtr -> 

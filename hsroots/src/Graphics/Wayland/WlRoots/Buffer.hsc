@@ -26,13 +26,13 @@ getBufferResource (WlrBuffer ptr) = do
         else pure $ Just ret
 
 -- NB: This works because the first element in  a wlr_client_buffer is a wlr_buffer
-foreign import ccall unsafe "wlr_buffer_lock" c_ref :: Ptr WlrBuffer -> IO ()
+foreign import ccall safe "wlr_buffer_lock" c_ref :: Ptr WlrBuffer -> IO ()
 
 getBuffer :: WlrBuffer -> IO WlrBuffer
 getBuffer b@(WlrBuffer ptr) = c_ref ptr >> pure b
 
 -- NB: This works because the first element in  a wlr_client_buffer is a wlr_buffer
-foreign import ccall unsafe "wlr_buffer_unlock" c_unref :: Ptr WlrBuffer -> IO ()
+foreign import ccall safe "wlr_buffer_unlock" c_unref :: Ptr WlrBuffer -> IO ()
 
 putBuffer :: WlrBuffer -> IO ()
 putBuffer (WlrBuffer ptr) = c_unref ptr
