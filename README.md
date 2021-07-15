@@ -11,7 +11,7 @@ Join us in [#waymonad:matrix.org](https://matrix.to/#/#waymonad:matrix.org)!
 ## Running it
 
 You must first install [Nix](https://nixos.org/download.html),
-and after that you can run `nix-shell` in the root of the repository.
+and after that you can run `nix-shell --pure` in the root of the repository.
 This will give you an environment with GHC, Cabal, etc.
 
 Now you can simply run `cabal run` which hopefully will launch Waymonad.
@@ -52,7 +52,10 @@ You are free to help implement the above.
 
 ## Troubleshooting
 
-Try running `nix-shell --pure` instead if you're having problems inside the shell.
+Try running `nix-shell` instead if you're having problems inside the shell.
 Make sure to set `XDG_RUNTIME_DIR` and `WAYLAND_DISPLAY` if you do this.
+
+If you can't get it to build, try deleting dist-newstyle each time you change something, so that
+you can get a clean build.
 
 <img src="./assets/logo-light.svg">
