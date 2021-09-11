@@ -8,7 +8,7 @@
     sha256 = "06gm7jc97hj19w200gpn515yf9h1q4jmvylh9h2gjs5x6f01mwhy";
   };
   nixpkgs = builtins.fetchTarball {
-    url = "https://github.com/NixOS/nixpkgs/archive/258e959faf55c76c1855b57ee26a97027a303c28.tar.gz";
-    sha256 = "04yb2mg86pz85w83fnj4qgggx5pjdc7hlnfs18s6jzwrcs5v8l3p";
+    url = "https://github.com/NixOS/nixpkgs/archive/91d2ebe422fa7f3745c7ef7b73dde8dbb2a0a382.tar.gz";
+    sha256 = "0p5wii9gk2b2cxniq6b5hlqjvaj30hks0qfym24lnfdvb3wppz0q";
   };
 }
