@@ -1,0 +1,7 @@
+[submodule "hsroots/libinput"]
+	path = hsroots/libinput
+	url = https://github.com/L-as/libinput.git
+	ignore = dirty
+[submodule "hsroots/haskell-xkbcommon"]
+	path = hsroots/haskell-xkbcommon
+	url = https://github.com/L-as/haskell-xkbcommon.git
